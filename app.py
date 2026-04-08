@@ -324,7 +324,7 @@ def admin_dashboard():
     cursor.execute("SELECT is_active FROM election_status WHERE id = 1")
     election_active = cursor.fetchone()[0]
 
-    cursor.execute("SELECT * FROM candidates")
+    cursor.execute("SELECT * FROM candidates ORDER BY vote_count DESC")
     candidates = cursor.fetchall()
 
     cursor.close()
@@ -332,6 +332,7 @@ def admin_dashboard():
 
     chain_valid    = blockchain.is_chain_valid()
     anomaly_status = security.detect_anomalies()
+    alerts         = security.get_alerts()
 
     return render_template("admin_dashboard.html",
         total_voters    = total_voters,
@@ -339,9 +340,9 @@ def admin_dashboard():
         election_active = election_active,
         candidates      = candidates,
         chain_valid     = chain_valid,
-        anomaly_status  = anomaly_status
+        anomaly_status  = anomaly_status,
+        alerts          = alerts
     )
-
 # ─────────────────────────────────────────
 # START / STOP ELECTION
 # ─────────────────────────────────────────

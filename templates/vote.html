@@ -5,13 +5,236 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cast Your Vote | SecureVote</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .vote-page {
+            background: linear-gradient(135deg, #e8eaf6 0%, #f0f2f5 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .vote-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .vote-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .vote-header h2 {
+            color: #1a237e;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .voter-welcome {
+            background: white;
+            border-radius: 14px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .voter-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #1a237e, #42a5f5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .voter-info h4 {
+            color: #1a237e;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .voter-info p {
+            color: #666;
+            font-size: 0.82rem;
+        }
+
+        .warning-banner {
+            background: linear-gradient(135deg, #fff8e1, #fff3e0);
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            color: #e65100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vote-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(26,35,126,0.1);
+        }
+
+        .vote-card h3 {
+            color: #1a237e;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .candidate-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafafa;
+        }
+
+        .candidate-option:hover {
+            border-color: #3949ab;
+            background: #f0f2ff;
+            transform: translateX(5px);
+        }
+
+        .candidate-option.selected {
+            border-color: #1a237e;
+            background: linear-gradient(135deg, #e8eaf6, #ede7f6);
+            box-shadow: 0 4px 20px rgba(26,35,126,0.15);
+            transform: translateX(5px);
+        }
+
+        .candidate-option input[type="radio"] {
+            display: none;
+        }
+
+        .candidate-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .radio-custom {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #c5cae9;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .candidate-option.selected .radio-custom {
+            border-color: #1a237e;
+            background: #1a237e;
+        }
+
+        .radio-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .candidate-option.selected .radio-dot {
+            opacity: 1;
+        }
+
+        .candidate-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1a237e, #42a5f5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .candidate-text h4 {
+            color: #1a237e;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .candidate-text p {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .vote-submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #1a237e, #3949ab, #42a5f5);
+            background-size: 200% auto;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+        }
+
+        .vote-submit-btn:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(26,35,126,0.4);
+        }
+
+        .vote-submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666;
+            font-size: 0.82rem;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- NAVIGATION BAR -->
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+            <a href="{{ url_for('index') }}"
+               style="color:white; text-decoration:none;">
                 🗳️ SecureVote
             </a>
         </div>
@@ -32,65 +255,93 @@
         {% endif %}
     {% endwith %}
 
-    <!-- VOTING SECTION -->
-    <div class="form-container">
-        <div class="form-card">
+    <!-- VOTE PAGE -->
+    <div class="vote-page">
+        <div class="vote-wrapper">
 
-            <div class="form-header">
+            <!-- Header -->
+            <div class="vote-header">
                 <h2>🗳️ Cast Your Vote</h2>
-                <p>Welcome, <strong>{{ session['voter_name'] }}</strong>!
-                   Select your candidate carefully — you can only vote once!</p>
+                <p style="color:#666;">
+                    Select your candidate carefully
+                </p>
             </div>
 
-            <!-- WARNING BOX -->
-            <div class="warning-box">
-                ⚠️ <strong>Important:</strong> Your vote is final and cannot
-                be changed once submitted. Choose wisely!
+            <!-- Voter Welcome -->
+            <div class="voter-welcome">
+                <div class="voter-avatar">
+                    {{ session['voter_name'][0].upper() }}
+                </div>
+                <div class="voter-info">
+                    <h4>Welcome, {{ session['voter_name'] }}!</h4>
+                    <p>You can only vote once — choose wisely!</p>
+                </div>
             </div>
 
-            <!-- VOTING FORM -->
-            <form method="POST" action="{{ url_for('vote') }}"
-                  onsubmit="return confirmVote()">
+            <!-- Warning -->
+            <div class="warning-banner">
+                ⚠️ <strong>Important:</strong>
+                Your vote is final and cannot be changed
+                once submitted!
+            </div>
 
-                <div class="candidates-list">
+            <!-- Vote Form -->
+            <div class="vote-card">
+                <h3>🏛️ Select Your Candidate</h3>
+
+                <form method="POST"
+                      action="{{ url_for('vote') }}"
+                      id="voteForm">
+
                     {% for candidate in candidates %}
-                    <div class="candidate-card">
-                        <label class="candidate-label">
-                            <input
-                                type="radio"
-                                name="candidate_id"
-                                value="{{ candidate[0] }}"
-                                required
-                            >
-                            <div class="candidate-info">
-                                <div class="candidate-avatar">
-                                    {{ candidate[1][0] }}
-                                </div>
-                                <div class="candidate-details">
-                                    <h3>{{ candidate[1] }}</h3>
-                                    <p>🏛️ {{ candidate[2] }}</p>
-                                </div>
+                    <div class="candidate-option"
+                         id="option-{{ candidate[0] }}"
+                         onclick="selectCandidate(
+                             {{ candidate[0] }},
+                             '{{ candidate[1] }}'
+                         )">
+
+                        <input type="radio"
+                               name="candidate_id"
+                               value="{{ candidate[0] }}"
+                               id="c{{ candidate[0] }}"
+                               required>
+
+                        <div class="candidate-content">
+                            <div class="radio-custom">
+                                <div class="radio-dot"></div>
                             </div>
-                        </label>
+                            <div class="candidate-avatar">
+                                {{ candidate[1][0].upper() }}
+                            </div>
+                            <div class="candidate-text">
+                                <h4>{{ candidate[1] }}</h4>
+                                <p>🏛️ {{ candidate[2] }}</p>
+                            </div>
+                        </div>
+
                     </div>
                     {% endfor %}
-                </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary btn-full">
-                    🗳️ Cast My Vote
-                </button>
+                    <button type="submit"
+                            class="vote-submit-btn"
+                            id="submitBtn"
+                            onclick="return confirmVote()">
+                        🗳️ Cast My Vote
+                    </button>
 
-            </form>
+                </form>
+
+            </div>
+
+            <!-- Security Badges -->
+            <div class="security-badges">
+                <div class="badge">🔗 Blockchain secured</div>
+                <div class="badge">🔐 SHA-256 encrypted</div>
+                <div class="badge">✅ Smart contract verified</div>
+            </div>
 
         </div>
-    </div>
-
-    <!-- BLOCKCHAIN INFO -->
-    <div class="security-note">
-        <p>🔗 Your vote will be recorded on the blockchain</p>
-        <p>🔐 Your identity is protected using SHA-256 hashing</p>
-        <p>✅ Smart contract ensures one vote per voter</p>
     </div>
 
     <!-- FOOTER -->
@@ -99,46 +350,46 @@
     </footer>
 
     <script>
-        // Ask voter to confirm before submitting vote
-        function confirmVote() {
-            // Find which candidate was selected
-            const selected = document.querySelector(
-                'input[name="candidate_id"]:checked'
-            );
+        let selectedName = '';
+        let selectedId   = null;
 
-            if (!selected) {
-                alert("Please select a candidate first!");
+        function selectCandidate(id, name) {
+            // Remove selected from all
+            document.querySelectorAll('.candidate-option')
+                .forEach(o => o.classList.remove('selected'));
+
+            // Add selected to clicked
+            document.getElementById('option-' + id)
+                .classList.add('selected');
+
+            // Check the radio button
+            document.getElementById('c' + id).checked = true;
+
+            selectedName = name;
+            selectedId   = id;
+        }
+
+        function confirmVote() {
+            if (!selectedId) {
+                alert('Please select a candidate first!');
                 return false;
             }
 
-            // Get candidate name from the card
-            const candidateName = selected
-                .closest('.candidate-card')
-                .querySelector('h3').innerText;
-
-            // Show confirmation dialog
             return confirm(
-                `Are you sure you want to vote for ${candidateName}?\n\n` +
-                `This action cannot be undone!`
+                'Are you sure you want to vote for ' +
+                selectedName + '?\n\n' +
+                'This action cannot be undone!'
             );
         }
 
-        // Highlight selected candidate card
-        document.querySelectorAll('input[name="candidate_id"]')
-            .forEach(radio => {
-                radio.addEventListener('change', function() {
-                    // Remove highlight from all cards
-                    document.querySelectorAll('.candidate-card')
-                        .forEach(card => card.classList.remove('selected'));
-
-                    // Add highlight to selected card
-                    this.closest('.candidate-card')
-                        .classList.add('selected');
-                });
+        // Show loading when submitting
+        document.getElementById('voteForm')
+            .addEventListener('submit', function() {
+                const btn = document.getElementById('submitBtn');
+                btn.innerHTML = '⏳ Recording your vote...';
+                btn.disabled  = true;
             });
     </script>
 
 </body>
 </html>
-```
-
