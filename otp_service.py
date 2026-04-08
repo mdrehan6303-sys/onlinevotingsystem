@@ -9,8 +9,15 @@ from datetime import datetime, timedelta
 class OTPService:
 
     def __init__(self):
-        self.gmail_address  = "mdrehan6303@gmail.com"
-        self.gmail_password = "wfwqyafrdmjhybex"
+import os
+self.gmail_address  = os.environ.get(
+    "GMAIL_ADDRESS",
+    "mdrehan6303@gmail.com"
+)
+self.gmail_password = os.environ.get(
+    "GMAIL_PASSWORD",
+    "wfwqyafrdmjhybex"
+)
         self.otp_storage = {}
 
     def generate_otp(self):

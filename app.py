@@ -7,18 +7,23 @@ from security import SecurityModule
 from otp_service import OTPService
 
 app = Flask(__name__)
-app.secret_key = "voting_system_secret_key_2024"
+import os
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "voting_system_secret_key_2024"
+)
 
 blockchain = Blockchain()
 security   = SecurityModule()
 otp_service = OTPService()
 
 def get_db():
+    import os
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root123",
-        database="voting_system"
+        host     = os.environ.get("MYSQL_HOST", "localhost"),
+        user     = os.environ.get("MYSQL_USER", "root"),
+        password = os.environ.get("MYSQL_PASSWORD", "root123"),
+        database = os.environ.get("MYSQL_DATABASE", "voting_system")
     )
 
 # ─────────────────────────────────────────
@@ -408,4 +413,6 @@ def admin_logout():
 # RUN THE APP
 # ─────────────────────────────────────────
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
