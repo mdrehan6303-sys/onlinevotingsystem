@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Online Voting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-brand">🗳️ SecureVote</div>
+        <div class="nav-links">
+            <a href="{{ url_for('results') }}">📊 Results</a>
+            <a href="{{ url_for('admin_login') }}">🔐 Admin</a>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES (success/error notifications) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>🗳️ Secure Online Voting System</h1>
+            <p>A blockchain-powered, tamper-proof voting platform that ensures
+               fair, transparent, and secure elections.</p>
+
+            <div class="hero-buttons">
+                <a href="{{ url_for('voter_register') }}" class="btn btn-primary">
+                    📝 Register to Vote
+                </a>
+                <a href="{{ url_for('voter_login') }}" class="btn btn-secondary">
+                    🔑 Voter Login
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES SECTION -->
+    <div class="features">
+        <h2>Why SecureVote?</h2>
+        <div class="features-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Blockchain Secured</h3>
+                <p>Every vote is stored as a block in the blockchain.
+                   Impossible to tamper or delete!</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>SHA-256 Encrypted</h3>
+                <p>Your identity and password are protected using
+                   military-grade SHA-256 encryption.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h3>One Vote Per Voter</h3>
+                <p>Smart contracts automatically prevent any voter
+                   from casting more than one vote.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Fraud Detection</h3>
+                <p>DBSCAN and Isolation Forest algorithms detect
+                   suspicious voting patterns automatically.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+        <p>CVR College of Engineering | Dept. of CSE(DS)</p>
+    </footer>
+
+</body>
+</html>
+```
+

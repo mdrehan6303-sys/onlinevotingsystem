@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .otp-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-digit {
+            width: 55px;
+            height: 55px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+            color: #1a237e;
+        }
+
+        .otp-digit:focus {
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
+        }
+
+        .timer {
+            text-align: center;
+            color: #f57f17;
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+
+        .timer.expired {
+            color: #c62828;
+        }
+
+        .resend-btn {
+            background: none;
+            border: none;
+            color: #1a237e;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: underline;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .resend-btn:disabled {
+            color: #999;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        .email-display {
+            background: #e8eaf6;
+            border-radius: 8px;
+            padding: 10px 15px;
+            text-align: center;
+            color: #1a237e;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('index') }}"
+               style="color:white; text-decoration:none;">
+                🗳️ SecureVote
+            </a>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- OTP FORM -->
+    <div class="form-container">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h2>📧 Verify Your Email</h2>
+                <p>We sent a 6-digit OTP to your email</p>
+            </div>
+
+            <!-- Show which email OTP was sent to -->
+            <div class="email-display">
+                📧 {{ email }}
+            </div>
+
+            <!-- Timer -->
+            <div class="timer" id="timer">
+                ⏰ OTP expires in: <span id="countdown">05:00</span>
+            </div>
+
+            <!-- OTP Form -->
+            <form method="POST"
+                  action="{{ url_for('verify_otp') }}"
+                  id="otpForm">
+
+                <!-- 6 individual digit boxes -->
+                <div class="otp-input-group">
+                    <input type="text" class="otp-digit"
+                           id="d1" maxlength="1" autofocus>
+                    <input type="text" class="otp-digit"
+                           id="d2" maxlength="1">
+                    <input type="text" class="otp-digit"
+                           id="d3" maxlength="1">
+                    <input type="text" class="otp-digit"
+                           id="d4" maxlength="1">
+                    <input type="text" class="otp-digit"
+                           id="d5" maxlength="1">
+                    <input type="text" class="otp-digit"
+                           id="d6" maxlength="1">
+                </div>
+
+                <!-- Hidden input that combines all 6 digits -->
+                <input type="hidden" name="otp" id="otpValue">
+
+                <button type="submit"
+                        class="btn btn-primary btn-full"
+                        onclick="combineOTP()">
+                    ✅ Verify OTP
+                </button>
+
+            </form>
+
+            <!-- Resend OTP -->
+            <div style="text-align: center; margin-top: 15px;">
+                <p style="color: #666; font-size: 0.9rem;">
+                    Didn't receive OTP?
+                </p>
+                <button class="resend-btn"
+                        id="resendBtn"
+                        disabled
+                        onclick="resendOTP()">
+                    Resend OTP (wait 60 seconds)
+                </button>
+            </div>
+
+            <!-- Back to register -->
+            <div class="form-footer">
+                <a href="{{ url_for('voter_register') }}">
+                    ← Back to Registration
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+    </footer>
+
+    <script>
+        // ── Auto move to next box when digit entered ──
+        const digits = document.querySelectorAll('.otp-digit');
+
+        digits.forEach((digit, index) => {
+            digit.addEventListener('input', function() {
+                // Only allow numbers
+                this.value = this.value.replace(/[^0-9]/g, '');
+
+                // Move to next box automatically
+                if (this.value && index < digits.length - 1) {
+                    digits[index + 1].focus();
+                }
+            });
+
+            // Allow backspace to go back
+            digit.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    digits[index - 1].focus();
+                }
+            });
+        });
+
+        // ── Combine all 6 digits into one OTP value ──
+        function combineOTP() {
+            let otp = '';
+            digits.forEach(digit => otp += digit.value);
+            document.getElementById('otpValue').value = otp;
+        }
+
+        // ── 5 minute countdown timer ──
+        let timeLeft = 300; // 300 seconds = 5 minutes
+        const countdownEl = document.getElementById('countdown');
+        const timerEl     = document.getElementById('timer');
+        const resendBtn   = document.getElementById('resendBtn');
+
+        const timer = setInterval(function() {
+            timeLeft--;
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+
+            countdownEl.textContent =
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
+
+            // Enable resend button after 60 seconds
+            if (timeLeft === 240) {
+                resendBtn.disabled = false;
+                resendBtn.textContent = '🔄 Resend OTP';
+            }
+
+            // Timer expired
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                timerEl.classList.add('expired');
+                countdownEl.textContent = 'EXPIRED';
+                timerEl.innerHTML =
+                    '❌ OTP has expired! Please request a new one.';
+            }
+        }, 1000);
+
+        // ── Resend OTP ──
+        function resendOTP() {
+            window.location.href = "{{ url_for('resend_otp') }}";
+        }
+    </script>
+
+</body>
+</html>
+```
+
+### Step 3 — Save the file
+Press **Command + S** ✅
+
+---
+
+### 🤔 What this page does:
+```
+Shows 6 individual digit boxes
+      ↓
+Voter types OTP digits
+      ↓
+Auto moves to next box as they type
+      ↓
+5 minute countdown timer shown
+      ↓
+After 60 seconds resend button appears
+      ↓
+Click Verify OTP → checks if correct

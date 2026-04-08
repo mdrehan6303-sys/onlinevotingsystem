@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+                🗳️ SecureVote
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('results') }}">📊 Results</a>
+            <a href="{{ url_for('admin_logout') }}">🚪 Logout</a>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- DASHBOARD -->
+    <div class="dashboard">
+        <h2>🔐 Admin Dashboard</h2>
+        <p>Welcome Admin! Monitor and control the election from here.</p>
+
+        <!-- STATS CARDS -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number">{{ total_voters }}</div>
+                <div class="stat-label">Total Registered Voters</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🗳️</div>
+                <div class="stat-number">{{ votes_cast }}</div>
+                <div class="stat-label">Total Votes Cast</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    {% if election_active %}🟢{% else %}🔴{% endif %}
+                </div>
+                <div class="stat-number">
+                    {% if election_active %}ACTIVE{% else %}INACTIVE{% endif %}
+                </div>
+                <div class="stat-label">Election Status</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    {% if chain_valid %}✅{% else %}❌{% endif %}
+                </div>
+                <div class="stat-number">
+                    {% if chain_valid %}VALID{% else %}TAMPERED{% endif %}
+                </div>
+                <div class="stat-label">Blockchain Integrity</div>
+            </div>
+
+        </div>
+
+        <!-- ANOMALY DETECTION STATUS -->
+        <div class="anomaly-section">
+            <h3>🤖 AI Anomaly Detection Status</h3>
+            <div class="anomaly-status
+                {% if anomaly_status == 'normal' %}anomaly-normal
+                {% elif anomaly_status == 'suspicious' %}anomaly-suspicious
+                {% else %}anomaly-neutral{% endif %}">
+
+                {% if anomaly_status == 'normal' %}
+                    ✅ All voting patterns look normal
+                {% elif anomaly_status == 'suspicious' %}
+                    🚨 Suspicious voting patterns detected! Investigate immediately!
+                {% else %}
+                    ℹ️ Insufficient data for anomaly detection yet
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ELECTION CONTROL -->
+        <div class="control-section">
+            <h3>⚙️ Election Control</h3>
+            <a href="{{ url_for('toggle_election') }}" class="btn
+                {% if election_active %}btn-danger{% else %}btn-success{% endif %}">
+                {% if election_active %}
+                    🔴 Stop Election
+                {% else %}
+                    🟢 Start Election
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- CANDIDATES TABLE -->
+        <div class="table-section">
+            <h3>🏛️ Candidates & Vote Counts</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Candidate Name</th>
+                        <th>Party</th>
+                        <th>Votes Received</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                    <tr>
+                        <td>{{ candidate[0] }}</td>
+                        <td>{{ candidate[1] }}</td>
+                        <td>{{ candidate[2] }}</td>
+                        <td><strong>{{ candidate[3] }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+    </footer>
+
+</body>
+</html>
+```
+

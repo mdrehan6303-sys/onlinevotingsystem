@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+                🗳️ SecureVote
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('voter_login') }}">🔑 Voter Login</a>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- ADMIN LOGIN FORM -->
+    <div class="form-container">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h2>🔐 Admin Login</h2>
+                <p>Authorized personnel only</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('admin_login') }}">
+
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username">👤 Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter admin username"
+                        required
+                    >
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">🔒 Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter admin password"
+                        required
+                    >
+                </div>
+
+                <!-- Default credentials hint -->
+                <div class="hint-box">
+                    💡 Default credentials — Username: <strong>admin</strong>
+                    | Password: <strong>admin123</strong>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-full">
+                    🔐 Login as Admin
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+    </footer>
+
+</body>
+</html>

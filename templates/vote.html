@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cast Your Vote | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+                🗳️ SecureVote
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('results') }}">📊 Results</a>
+            <a href="{{ url_for('voter_logout') }}">🚪 Logout</a>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- VOTING SECTION -->
+    <div class="form-container">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h2>🗳️ Cast Your Vote</h2>
+                <p>Welcome, <strong>{{ session['voter_name'] }}</strong>!
+                   Select your candidate carefully — you can only vote once!</p>
+            </div>
+
+            <!-- WARNING BOX -->
+            <div class="warning-box">
+                ⚠️ <strong>Important:</strong> Your vote is final and cannot
+                be changed once submitted. Choose wisely!
+            </div>
+
+            <!-- VOTING FORM -->
+            <form method="POST" action="{{ url_for('vote') }}"
+                  onsubmit="return confirmVote()">
+
+                <div class="candidates-list">
+                    {% for candidate in candidates %}
+                    <div class="candidate-card">
+                        <label class="candidate-label">
+                            <input
+                                type="radio"
+                                name="candidate_id"
+                                value="{{ candidate[0] }}"
+                                required
+                            >
+                            <div class="candidate-info">
+                                <div class="candidate-avatar">
+                                    {{ candidate[1][0] }}
+                                </div>
+                                <div class="candidate-details">
+                                    <h3>{{ candidate[1] }}</h3>
+                                    <p>🏛️ {{ candidate[2] }}</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-full">
+                    🗳️ Cast My Vote
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- BLOCKCHAIN INFO -->
+    <div class="security-note">
+        <p>🔗 Your vote will be recorded on the blockchain</p>
+        <p>🔐 Your identity is protected using SHA-256 hashing</p>
+        <p>✅ Smart contract ensures one vote per voter</p>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+    </footer>
+
+    <script>
+        // Ask voter to confirm before submitting vote
+        function confirmVote() {
+            // Find which candidate was selected
+            const selected = document.querySelector(
+                'input[name="candidate_id"]:checked'
+            );
+
+            if (!selected) {
+                alert("Please select a candidate first!");
+                return false;
+            }
+
+            // Get candidate name from the card
+            const candidateName = selected
+                .closest('.candidate-card')
+                .querySelector('h3').innerText;
+
+            // Show confirmation dialog
+            return confirm(
+                `Are you sure you want to vote for ${candidateName}?\n\n` +
+                `This action cannot be undone!`
+            );
+        }
+
+        // Highlight selected candidate card
+        document.querySelectorAll('input[name="candidate_id"]')
+            .forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Remove highlight from all cards
+                    document.querySelectorAll('.candidate-card')
+                        .forEach(card => card.classList.remove('selected'));
+
+                    // Add highlight to selected card
+                    this.closest('.candidate-card')
+                        .classList.add('selected');
+                });
+            });
+    </script>
+
+</body>
+</html>
+```
+

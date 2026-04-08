@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Results | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+                🗳️ SecureVote
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('voter_login') }}">🔑 Voter Login</a>
+            <a href="{{ url_for('admin_login') }}">🔐 Admin</a>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- RESULTS SECTION -->
+    <div class="dashboard">
+
+        <div class="results-header">
+            <h2>📊 Election Results</h2>
+            <p>Total Votes Cast: <strong>{{ total_votes }}</strong></p>
+        </div>
+
+        <!-- WINNER ANNOUNCEMENT -->
+        {% if candidates and total_votes > 0 %}
+        <div class="winner-card">
+            <div class="winner-crown">🏆</div>
+            <h3>Winner</h3>
+            <h2>{{ candidates[0][1] }}</h2>
+            <p>🏛️ {{ candidates[0][2] }}</p>
+            <p class="winner-votes">
+                {{ candidates[0][3] }} votes
+                ({% if total_votes > 0 %}
+                    {{ "%.1f"|format(candidates[0][3] / total_votes * 100) }}%
+                {% else %}0%{% endif %})
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- ALL CANDIDATES RESULTS -->
+        <div class="results-list">
+            <h3>📋 All Candidates</h3>
+
+            {% for candidate in candidates %}
+            <div class="result-card {% if loop.first %}result-winner{% endif %}">
+
+                <!-- Rank -->
+                <div class="result-rank">
+                    {% if loop.index == 1 %}🥇
+                    {% elif loop.index == 2 %}🥈
+                    {% elif loop.index == 3 %}🥉
+                    {% else %}#{{ loop.index }}{% endif %}
+                </div>
+
+                <!-- Candidate Info -->
+                <div class="result-info">
+                    <h3>{{ candidate[1] }}</h3>
+                    <p>🏛️ {{ candidate[2] }}</p>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width:
+                            {% if total_votes > 0 %}
+                                {{ candidate[3] / total_votes * 100 }}%
+                            {% else %}0%{% endif %}">
+                        </div>
+                    </div>
+                    <small>
+                        {% if total_votes > 0 %}
+                            {{ "%.1f"|format(candidate[3] / total_votes * 100) }}%
+                        {% else %}0%{% endif %}
+                        of total votes
+                    </small>
+                </div>
+
+                <!-- Vote Count -->
+                <div class="result-votes">
+                    <div class="vote-count">{{ candidate[3] }}</div>
+                    <div class="vote-label">votes</div>
+                </div>
+
+            </div>
+            {% endfor %}
+
+            <!-- If no votes yet -->
+            {% if total_votes == 0 %}
+            <div class="no-votes">
+                <p>🗳️ No votes have been cast yet.</p>
+                <p>Results will appear here once voting begins.</p>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- BLOCKCHAIN TRANSPARENCY NOTE -->
+        <div class="transparency-note">
+            <h3>🔗 Blockchain Transparency</h3>
+            <p>All votes are permanently recorded on the blockchain.
+               Every vote is cryptographically secured and cannot be
+               modified or deleted. Results are 100% accurate and
+               tamper-proof.</p>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+        <p>CVR College of Engineering | Dept. of CSE(DS)</p>
+    </footer>
+
+</body>
+</html>

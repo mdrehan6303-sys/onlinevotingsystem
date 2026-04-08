@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Login | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+                🗳️ SecureVote
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('voter_register') }}">📝 Register</a>
+            <a href="{{ url_for('admin_login') }}">🔐 Admin</a>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- LOGIN FORM -->
+    <div class="form-container">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h2>🔑 Voter Login</h2>
+                <p>Login with your Voter ID and password to cast your vote</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('voter_login') }}">
+
+                <!-- Voter ID -->
+                <div class="form-group">
+                    <label for="voter_id">🪪 Voter ID</label>
+                    <input
+                        type="text"
+                        id="voter_id"
+                        name="voter_id"
+                        placeholder="Enter your Voter ID"
+                        required
+                    >
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">🔒 Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-full">
+                    🔑 Login & Vote
+                </button>
+
+            </form>
+
+            <!-- Link to Register -->
+            <div class="form-footer">
+                <p>Not registered yet?
+                    <a href="{{ url_for('voter_register') }}">Register here</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SECURITY NOTE -->
+    <div class="security-note">
+        <p>🔐 Your connection is secured with SHA-256 encryption</p>
+        <p>🔗 All votes are stored on tamper-proof blockchain</p>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+    </footer>
+
+</body>
+</html>
+```
+
