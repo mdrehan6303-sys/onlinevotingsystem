@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vote Receipt | SecureVote</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .receipt-page {
+      background: linear-gradient(135deg, #e8eaf6 0%, #f0f2f5 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .receipt-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .success-banner {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      color: white;
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
+    }
+
+    .success-icon {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+      display: block;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .success-banner h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .success-banner p {
+      opacity: 0.85;
+      font-size: 0.95rem;
+    }
+
+    .receipt-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(26, 35, 126, 0.12);
+      margin-bottom: 20px;
+    }
+
+    .receipt-header {
+      background: linear-gradient(135deg, #1a237e, #3949ab);
+      color: white;
+      padding: 25px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .receipt-header h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .receipt-header p {
+      opacity: 0.75;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .receipt-id {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 8px 15px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .receipt-body {
+      padding: 25px 30px;
+    }
+
+    .receipt-section {
+      margin-bottom: 25px;
+      padding-bottom: 25px;
+      border-bottom: 1px dashed #e0e0e0;
+    }
+
+    .receipt-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .receipt-section h4 {
+      color: #999;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .receipt-row .label {
+      color: #666;
+      font-size: 0.88rem;
+      flex: 1;
+    }
+
+    .receipt-row .value {
+      color: #1a237e;
+      font-size: 0.88rem;
+      font-weight: 600;
+      flex: 1;
+      text-align: right;
+    }
+
+    .candidate-voted {
+      background: linear-gradient(135deg, #e8eaf6, #ede7f6);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .candidate-voted-avatar {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #1a237e, #42a5f5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .candidate-voted-info h4 {
+      color: #1a237e;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .candidate-voted-info p {
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    .hash-box {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 15px 18px;
+      margin-bottom: 12px;
+    }
+
+    .hash-label {
+      color: #42a5f5;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .hash-value {
+      color: #a5d6a7;
+      font-family: monospace;
+      font-size: 0.82rem;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .block-info {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .block-badge {
+      background: linear-gradient(135deg, #1a237e, #42a5f5);
+      color: white;
+      border-radius: 10px;
+      padding: 10px 18px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .block-badge .number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: block;
+    }
+
+    .block-badge .label {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+
+    .verified-badge {
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+      border: 1px solid #a5d6a7;
+      border-radius: 12px;
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #1b5e20;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    .receipt-actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn-print {
+      background: white;
+      color: #1a237e;
+      border: 2px solid #1a237e;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.92rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-print:hover {
+      background: #1a237e;
+      color: white;
+    }
+
+    @media print {
+
+      .navbar,
+      .receipt-actions,
+      .footer,
+      .success-banner {
+        display: none !important;
+      }
+
+      .receipt-page {
+        background: white;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+        🗳️ SecureVote
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('results', election_id=election_id) }}">📊 Results</a>
+    </div>
+  </nav>
+
+  <!-- RECEIPT PAGE -->
+  <div class="receipt-page">
+    <div class="receipt-wrapper">
+
+      <!-- Success Banner -->
+      <div class="success-banner">
+        <span class="success-icon">✅</span>
+        <h2>Vote Cast Successfully!</h2>
+        <p>Your vote has been permanently recorded
+          on the blockchain</p>
+      </div>
+
+      <!-- Receipt Card -->
+      <div class="receipt-card">
+
+        <!-- Receipt Header -->
+        <div class="receipt-header">
+          <div>
+            <h3>🗳️ Vote Receipt</h3>
+            <p>SecureVote — Blockchain Voting System</p>
+          </div>
+          <div class="receipt-id">
+            #{{ receipt.block_index }}
+          </div>
+        </div>
+
+        <!-- Receipt Body -->
+        <div class="receipt-body">
+
+          <!-- Voter Info -->
+          <div class="receipt-section">
+            <h4>Voter Information</h4>
+            <div class="receipt-row">
+              <span class="label">👤 Voter Name</span>
+              <span class="value">{{ receipt.voter_name }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="label">🪪 Voter ID</span>
+              <span class="value">{{ receipt.voter_id }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="label">⏰ Voted At</span>
+              <span class="value">{{ receipt.timestamp }}</span>
+            </div>
+          </div>
+
+          <!-- Candidate Info -->
+          <div class="receipt-section">
+            <h4>Vote Cast For</h4>
+            <div class="candidate-voted">
+              <div class="candidate-voted-avatar">
+                {{ receipt.candidate_name[0].upper() }}
+              </div>
+              <div class="candidate-voted-info">
+                <h4>{{ receipt.candidate_name }}</h4>
+                <p>🏛️ {{ receipt.candidate_party }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blockchain Info -->
+          <div class="receipt-section">
+            <h4>Blockchain Details</h4>
+
+            <div class="block-info">
+              <div class="block-badge">
+                <span class="number">
+                  #{{ receipt.block_index }}
+                </span>
+                <span class="label">Block Number</span>
+              </div>
+              <div class="block-badge">
+                <span class="number">SHA256</span>
+                <span class="label">Hash Algorithm</span>
+              </div>
+            </div>
+
+            <div class="hash-box">
+              <div class="hash-label">
+                CURRENT BLOCK HASH
+              </div>
+              <div class="hash-value">
+                {{ receipt.current_hash }}
+              </div>
+            </div>
+
+            <div class="hash-box">
+              <div class="hash-label">
+                PREVIOUS BLOCK HASH
+              </div>
+              <div class="hash-value">
+                {{ receipt.previous_hash }}
+              </div>
+            </div>
+
+            <div class="hash-box">
+              <div class="hash-label">
+                VOTER IDENTITY HASH (SHA-256)
+              </div>
+              <div class="hash-value">
+                {{ receipt.voter_hash }}
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Verified -->
+          <div class="receipt-section">
+            <h4>Cryptographic Receipt QR Code</h4>
+            <div style="text-align: center; margin-bottom: 20px;">
+              <img src="data:image/png;base64,{{ receipt.qr_code }}" alt="Vote Verification QR Code" style="max-width: 200px; border-radius: 10px; border: 4px solid #1a237e;">
+              <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Scan to verify block integrity on ledger explorer</p>
+            </div>
+            <div class="verified-badge">
+              🔒 Your vote is cryptographically
+              secured and cannot be modified
+              or deleted from the blockchain!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="receipt-actions">
+        <button onclick="window.print()" class="btn-print">
+          🖨️ Print Receipt
+        </button>
+        <a href="{{ url_for('results', election_id=election_id) }}" class="btn btn-primary">
+          📊 View Results
+        </a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary" style="color:#1a237e;">
+          🏠 Home
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+    <p>CVR College of Engineering | Dept. of CSE(DS)</p>
+  </footer>
+
+  <!-- Dark Mode Toggle -->
+  <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const btn = document.getElementById('darkBtn');
+      if (document.body.classList.contains('dark-mode')) {
+        btn.textContent = '☀️';
+        localStorage.setItem('darkMode', 'true');
+      } else {
+        btn.textContent = '🌙';
+        localStorage.setItem('darkMode', 'false');
+      }
+    }
+
+    // Remember dark mode preference
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkBtn').textContent = '☀️';
+    }
+  </script>
+</body>
+
+</html>

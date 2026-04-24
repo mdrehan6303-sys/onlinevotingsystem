@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voter ID Card | SecureVote</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .id-page {
+      background: linear-gradient(135deg, #e8eaf6 0%, #f0f2f5 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .id-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .id-wrapper h2 {
+      color: #1a237e;
+      font-size: 2rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .id-wrapper p {
+      color: #666;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .voter-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(26, 35, 126, 0.2);
+      margin-bottom: 25px;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #1a237e, #3949ab);
+      color: white;
+      padding: 20px 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .card-header-logo {
+      font-size: 2rem;
+    }
+
+    .card-header-text h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .card-header-text p {
+      opacity: 0.75;
+      font-size: 0.82rem;
+      color: white;
+      margin: 0;
+    }
+
+    .card-header-badge {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .card-body {
+      padding: 25px;
+      display: flex;
+      gap: 25px;
+      align-items: flex-start;
+    }
+
+    .card-avatar {
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(135deg, #1a237e, #42a5f5);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
+    }
+
+    .card-details {
+      flex: 1;
+    }
+
+    .card-name {
+      color: #1a237e;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .card-field {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .card-field-label {
+      color: #999;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      min-width: 80px;
+      text-transform: uppercase;
+    }
+
+    .card-field-value {
+      color: #333;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .card-qr {
+      width: 80px;
+      height: 80px;
+      background: #f0f2f5;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 2px solid #e0e0e0;
+      font-size: 0.7rem;
+      color: #999;
+      text-align: center;
+      padding: 5px;
+    }
+
+    .card-footer {
+      background: #f8f9ff;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e8eaf6;
+    }
+
+    .card-footer-text {
+      color: #666;
+      font-size: 0.78rem;
+    }
+
+    .card-status {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .security-strip {
+      background: linear-gradient(90deg,
+          #1a237e, #3949ab, #42a5f5,
+          #3949ab, #1a237e);
+      height: 6px;
+    }
+
+    @media print {
+
+      .navbar,
+      .card-actions,
+      .footer,
+      .id-wrapper h2,
+      .id-wrapper>p {
+        display: none !important;
+      }
+
+      .id-page {
+        background: white;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
+        🗳️ SecureVote
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('voter_login', election_id=election_id) }}">🔑 Login</a>
+    </div>
+  </nav>
+
+  <div class="id-page">
+    <div class="id-wrapper">
+
+      <h2>🪪 Your Voter ID Card</h2>
+      <p>Download or print your official digital voter ID</p>
+
+      <!-- Voter ID Card -->
+      <div class="voter-card" id="voter-card">
+
+        <!-- Security Strip -->
+        <div class="security-strip"></div>
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="card-header-logo">🗳️</div>
+          <div class="card-header-text">
+            <h3>SecureVote</h3>
+            <p>Official Voter Identity Card</p>
+          </div>
+          <div class="card-header-badge">
+            VERIFIED ✅
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+
+          <!-- Avatar -->
+          <div class="card-avatar">
+            {{ voter.full_name[0].upper() }}
+          </div>
+
+          <!-- Details -->
+          <div class="card-details">
+            <div class="card-name">
+              {{ voter.full_name }}
+            </div>
+
+            <div class="card-field">
+              <span class="card-field-label">
+                Voter ID
+              </span>
+              <span class="card-field-value">
+                {{ voter.voter_id }}
+              </span>
+            </div>
+
+            <div class="card-field">
+              <span class="card-field-label">
+                Email
+              </span>
+              <span class="card-field-value">
+                {{ voter.email }}
+              </span>
+            </div>
+
+            <div class="card-field">
+              <span class="card-field-label">
+                Status
+              </span>
+              <span class="card-field-value" style="color:#2e7d32;">
+                ✅ Verified Voter
+              </span>
+            </div>
+
+            <div class="card-field">
+              <span class="card-field-label">
+                Issued
+              </span>
+              <span class="card-field-value">
+                {{ voter.issued_date }}
+              </span>
+            </div>
+          </div>
+
+          <!-- QR Code placeholder -->
+          <div class="card-qr">
+            <div>
+              ▪▪▪<br>
+              ▪ ▪<br>
+              ▪▪▪<br>
+              <small>QR</small>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer">
+          <div class="card-footer-text">
+            🔐 Secured by SHA-256 Blockchain Technology<br>
+            CVR College of Engineering | Dept. of CSE(DS)
+          </div>
+          <div class="card-status">ACTIVE</div>
+        </div>
+
+        <!-- Security Strip Bottom -->
+        <div class="security-strip"></div>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="card-actions">
+        <button onclick="window.print()" class="btn btn-primary">
+          🖨️ Print ID Card
+        </button>
+        <a href="{{ url_for('vote', election_id=election_id) }}" class="btn btn-success">
+          🗳️ Cast Vote
+        </a>
+        <a href="{{ url_for('index') }}" class="btn" style="background:white;
+                          color:#1a237e;
+                          border:2px solid #1a237e;
+                          border-radius:25px;">
+          🏠 Home
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+    <p>CVR College of Engineering | Dept. of CSE(DS)</p>
+  </footer>
+
+  <!-- Dark Mode Toggle -->
+  <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const btn = document.getElementById('darkBtn');
+      if (document.body.classList.contains('dark-mode')) {
+        btn.textContent = '☀️';
+        localStorage.setItem('darkMode', 'true');
+      } else {
+        btn.textContent = '🌙';
+        localStorage.setItem('darkMode', 'false');
+      }
+    }
+
+    // Remember dark mode preference
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkBtn').textContent = '☀️';
+    }
+  </script>
+</body>
+
+</html>

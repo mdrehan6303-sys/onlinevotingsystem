@@ -3,3 +3,8 @@ mysql-connector-python
 scikit-learn
 numpy
 gunicorn
+flask-socketio
+flask-bcrypt
+qrcode
+eventlet
+Pillow>=11.0.0

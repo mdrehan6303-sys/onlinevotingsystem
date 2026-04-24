@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ election[1] }} — National Voting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="gov-topbar">Official Election Management Portal — Authorized Access</div>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="brand-seal">&#9670;</div>
+            <div class="brand-text">
+                <span class="brand-name">National Voting System</span>
+                <span class="brand-sub">Electronic Election Management Portal</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            {% if results_released %}<a href="{{ url_for('results', election_id=election_id) }}">Results</a>{% endif %}
+            <a href="{{ url_for('admin_login') }}">Administrator</a>
+            <a href="{{ url_for('index') }}">Home</a>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}{% endif %}
+    {% endwith %}
+
+    <!-- ELECTION HEADER BANNER -->
+    <div class="hero" style="padding:50px 40px 40px;">
+        <div class="hero-eyebrow">Electoral Mandate</div>
+        <h1>{{ election[1] }}</h1>
+        <div class="hero-divider"></div>
+        <p class="hero-sub" style="margin-bottom:30px;">{{ election[2] if election[2] else 'Official electoral mandate administered by the National Election Commission.' }}</p>
+
+        <div style="display:inline-flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+            <span class="badge {% if election[5] %}badge-success{% else %}badge-danger{% endif %}" style="font-size:0.8rem;padding:6px 14px;">
+                {% if election[5] %}Polling Active{% else %}Polling Closed{% endif %}
+            </span>
+            {% if results_released %}<span class="badge badge-gold" style="font-size:0.8rem;padding:6px 14px;">Results Released</span>{% endif %}
+        </div>
+
+        <div class="stats-bar" style="margin-top:30px;">
+            <div class="stat-item">
+                <span class="number">{{ total_voters }}</span>
+                <span class="label">Registered Voters</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">{{ votes_cast }}</span>
+                <span class="label">Ballots Cast</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">{{ candidates|length }}</span>
+                <span class="label">Candidates</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">{% if total_voters > 0 %}{{ ((votes_cast / total_voters) * 100)|round(1) }}%{% else %}0%{% endif %}</span>
+                <span class="label">Turnout</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" style="max-width:1100px;margin:0 auto;">
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;flex-wrap:wrap;">
+
+            <!-- CANDIDATES -->
+            <div>
+                <div class="section-header">
+                    <h2>Registered Candidates</h2>
+                    <p>{{ candidates|length }} candidate(s) standing in this mandate</p>
+                </div>
+                <div class="data-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Candidate Name</th>
+                                <th>Party / Affiliation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in candidates %}
+                            <tr>
+                                <td><strong>{{ loop.index }}</strong></td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        <div style="width:34px;height:34px;background:var(--navy);color:#fff;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0;">{{ c[1][0].upper() }}</div>
+                                        <strong>{{ c[1] }}</strong>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-neutral">{{ c[2] }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div>
+                <div class="section-header">
+                    <h2>Voter Actions</h2>
+                    <p>Participate in this mandate</p>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <a href="{{ url_for('voter_register', election_id=election_id) }}" class="btn btn-primary" style="justify-content:center;padding:14px;">
+                        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                        Register as Voter
+                    </a>
+                    <a href="{{ url_for('voter_login', election_id=election_id) }}" class="btn btn-gold" style="justify-content:center;padding:14px;">
+                        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline></svg>
+                        Sign In &amp; Cast Ballot
+                    </a>
+
+                    {% if results_released %}
+                    <a href="{{ url_for('results', election_id=election_id) }}" class="btn btn-outline" style="justify-content:center;padding:14px;">
+                        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        View Results
+                    </a>
+                    <a href="{{ url_for('statistics', election_id=election_id) }}" class="btn btn-outline" style="justify-content:center;padding:14px;">
+                        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        Election Statistics
+                    </a>
+                    {% else %}
+                    <div class="data-card" style="margin-top:4px;">
+                        <div class="data-card-body" style="text-align:center;padding:20px;">
+                            <svg viewBox="0 0 24 24" style="width:32px;height:32px;stroke:var(--border);fill:none;stroke-width:1.5;margin-bottom:10px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.7;">Results and statistics will be published by the Election Commission upon mandate closure.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- MANDATE DETAILS -->
+                <div class="data-card" style="margin-top:16px;">
+                    <div class="data-card-header"><h3>Mandate Details</h3></div>
+                    <div class="data-card-body" style="padding:0;">
+                        <table>
+                            <tbody>
+                                <tr><td style="color:var(--text-muted);font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Commencement</td><td>{% if election[3] %}{{ election[3].strftime('%d %b %Y') }}{% else %}—{% endif %}</td></tr>
+                                <tr><td style="color:var(--text-muted);font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Closure</td><td>{% if election[4] %}{{ election[4].strftime('%d %b %Y, %I:%M %p') }}{% else %}—{% endif %}</td></tr>
+                                <tr><td style="color:var(--text-muted);font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Status</td><td><span class="badge {% if election[5] %}badge-success{% else %}badge-danger{% endif %}">{% if election[5] %}Active{% else %}Closed{% endif %}</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-top"><div class="footer-logo">&#9670;</div><span class="footer-brand">National Electronic Voting System</span></div>
+        <p>Official Government Election Management Portal</p>
+    </footer>
+
+</body>
+</html>

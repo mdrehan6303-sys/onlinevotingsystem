@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .dashboard-page {
-            background: linear-gradient(135deg, #e8eaf6 0%, #f0f2f5 100%);
+            background: linear-gradient(135deg, #e8eaf6, #f0f2f5);
             min-height: 100vh;
             padding: 40px 20px;
         }
 
         .dashboard-wrapper {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -24,14 +24,9 @@
             margin-bottom: 8px;
         }
 
-        .dashboard-subtitle {
-            color: #666;
-            margin-bottom: 35px;
-        }
-
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
@@ -39,33 +34,21 @@
         .stat-card {
             background: white;
             border-radius: 20px;
-            padding: 28px;
+            padding: 25px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             border-top: 4px solid #1a237e;
             transition: transform 0.3s;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-icon {
-            font-size: 2.2rem;
-            margin-bottom: 12px;
-        }
-
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-icon { font-size: 2rem; margin-bottom: 10px; }
         .stat-number {
             font-size: 2rem;
             font-weight: 800;
             color: #1a237e;
-            margin-bottom: 6px;
         }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.85rem;
-        }
+        .stat-label { color: #666; font-size: 0.85rem; }
 
         .section-card {
             background: white;
@@ -84,58 +67,34 @@
             border-bottom: 2px solid #f0f2f5;
         }
 
-        .anomaly-status {
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
+        .form-inline {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
             margin-bottom: 15px;
         }
 
-        .anomaly-normal {
-            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-            color: #1b5e20;
-            border: 1px solid #a5d6a7;
-        }
-
-        .anomaly-suspicious {
-            background: linear-gradient(135deg, #ffebee, #fce4ec);
-            color: #b71c1c;
-            border: 1px solid #ef9a9a;
-        }
-
-        .anomaly-neutral {
-            background: linear-gradient(135deg, #e3f2fd, #e8eaf6);
-            color: #1565c0;
-            border: 1px solid #90caf9;
-        }
-
-        .alert-list {
-            margin-top: 15px;
-        }
-
-        .alert-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            background: #ffebee;
+        .form-inline input,
+        .form-inline select,
+        .form-inline textarea {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
             border-radius: 10px;
-            margin-bottom: 8px;
-            font-size: 0.88rem;
-            color: #b71c1c;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
         }
 
-        .alert-time {
-            color: #999;
-            font-size: 0.8rem;
-            margin-left: auto;
+        .form-inline input:focus,
+        .form-inline select:focus {
+            border-color: #1a237e;
         }
 
-        .control-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+        .form-inline input[type="text"],
+        .form-inline input[type="email"],
+        .form-inline input[type="date"] {
+            flex: 1;
+            min-width: 150px;
         }
 
         .data-table {
@@ -148,80 +107,74 @@
         .data-table th {
             background: linear-gradient(135deg, #1a237e, #3949ab);
             color: white;
-            padding: 14px 18px;
+            padding: 12px 15px;
             text-align: left;
-            font-size: 0.88rem;
-            font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .data-table td {
-            padding: 13px 18px;
+            padding: 12px 15px;
             border-bottom: 1px solid #f5f5f5;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
         }
 
-        .data-table tr:hover td {
-            background: #f8f9ff;
-        }
-
-        .vote-bar {
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 4px;
-            min-width: 100px;
-        }
-
-        .vote-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #1a237e, #42a5f5);
-            border-radius: 4px;
-        }
-
-        .blockchain-status {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-        }
-
-        .blockchain-valid {
-            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-            color: #1b5e20;
-            border: 1px solid #a5d6a7;
-        }
-
-        .blockchain-invalid {
-            background: linear-gradient(135deg, #ffebee, #fce4ec);
-            color: #b71c1c;
-            border: 1px solid #ef9a9a;
-        }
+        .data-table tr:hover td { background: #f8f9ff; }
 
         .badge-active {
             background: #e8f5e9;
             color: #2e7d32;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.82rem;
-            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.78rem;
+            font-weight: 700;
         }
 
         .badge-inactive {
             background: #ffebee;
             color: #c62828;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.82rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .action-link {
+            color: #1a237e;
+            text-decoration: none;
             font-weight: 600;
+            font-size: 0.82rem;
+            margin-right: 10px;
+        }
+
+        .action-link.danger { color: #c62828; }
+
+        .anomaly-status {
+            padding: 15px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .anomaly-normal {
+            background: #e8f5e9;
+            color: #1b5e20;
+            border: 1px solid #a5d6a7;
+        }
+
+        .anomaly-suspicious {
+            background: #ffebee;
+            color: #b71c1c;
+            border: 1px solid #ef9a9a;
+        }
+
+        .anomaly-neutral {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #90caf9;
         }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-brand">
             <a href="{{ url_for('index') }}"
@@ -230,12 +183,10 @@
             </a>
         </div>
         <div class="nav-links">
-            <a href="{{ url_for('results') }}">📊 Results</a>
             <a href="{{ url_for('admin_logout') }}">🚪 Logout</a>
         </div>
     </nav>
 
-    <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -246,162 +197,124 @@
         {% endif %}
     {% endwith %}
 
-    <!-- DASHBOARD -->
     <div class="dashboard-page">
         <div class="dashboard-wrapper">
 
             <h2 class="dashboard-title">🔐 Admin Dashboard</h2>
-            <p class="dashboard-subtitle">
-                Monitor and control the election from here
+            <p style="color:#666; margin-bottom:30px;">
+                Manage elections, voters and monitor activity
             </p>
 
-            <!-- STATS GRID -->
+            <!-- Quick Stats -->
             <div class="stats-grid">
-
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-number">{{ total_voters }}</div>
-                    <div class="stat-label">Total Registered Voters</div>
-                </div>
-
                 <div class="stat-card">
                     <div class="stat-icon">🗳️</div>
-                    <div class="stat-number">{{ votes_cast }}</div>
-                    <div class="stat-label">Total Votes Cast</div>
+                    <div class="stat-number">{{ total_elections }}</div>
+                    <div class="stat-label">Total Elections</div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-icon">
-                        {% if election_active %}🟢{% else %}🔴{% endif %}
-                    </div>
-                    <div class="stat-number">
-                        {% if election_active %}ON{% else %}OFF{% endif %}
-                    </div>
-                    <div class="stat-label">Election Status</div>
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number">{{ total_approved }}</div>
+                    <div class="stat-label">Approved Voters</div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-icon">
-                        {% if chain_valid %}✅{% else %}❌{% endif %}
+                    <div class="stat-icon">🤖</div>
+                    <div class="stat-number"
+                         style="font-size:1rem;">
+                        {{ anomaly_status|upper }}
                     </div>
-                    <div class="stat-number">
-                        {% if chain_valid %}VALID{% else %}TAMPERED{% endif %}
+                    <div class="stat-label">AI Status</div>
+                </div>
+            </div>
+
+            <!-- CREATE ELECTION -->
+            <div class="section-card">
+                <h3>➕ Create New Election</h3>
+                <form method="POST"
+                      action="{{ url_for('create_election') }}">
+                    <div class="form-inline">
+                        <input type="text" name="title"
+                               placeholder="Election Title" required
+                               style="flex:2; min-width:200px;">
+                        <input type="datetime-local"
+                               name="start_time" required>
+                        <input type="datetime-local"
+                               name="end_time" required>
                     </div>
-                    <div class="stat-label">Blockchain Integrity</div>
-                </div>
-
-            </div>
-
-            <!-- ELECTION CONTROL -->
-            <div class="section-card">
-                <h3>⚙️ Election Control</h3>
-                <div class="control-buttons">
-                    <a href="{{ url_for('toggle_election') }}"
-                       class="btn {% if election_active %}btn-danger
-                       {% else %}btn-success{% endif %}">
-                        {% if election_active %}
-                            🔴 Stop Election
-                        {% else %}
-                            🟢 Start Election
-                        {% endif %}
-                    </a>
-                    <a href="{{ url_for('results') }}"
-                       class="btn btn-primary">
-                        📊 View Results
-                    </a>
-                </div>
-            </div>
-
-            <!-- BLOCKCHAIN STATUS -->
-            <div class="section-card">
-                <h3>🔗 Blockchain Integrity</h3>
-                <div class="blockchain-status
-                    {% if chain_valid %}blockchain-valid
-                    {% else %}blockchain-invalid{% endif %}">
-                    {% if chain_valid %}
-                        ✅ Blockchain is intact — no tampering detected!
-                        All votes are secure and unmodified.
-                    {% else %}
-                        ❌ WARNING! Blockchain tampering detected!
-                        Some votes may have been modified!
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- AI ANOMALY DETECTION -->
-            <div class="section-card">
-                <h3>🤖 AI Anomaly Detection</h3>
-
-                <div class="anomaly-status
-                    {% if anomaly_status == 'normal' %}anomaly-normal
-                    {% elif anomaly_status == 'suspicious' %}anomaly-suspicious
-                    {% else %}anomaly-neutral{% endif %}">
-
-                    {% if anomaly_status == 'normal' %}
-                        ✅ All voting patterns look normal.
-                        No suspicious activity detected.
-                    {% elif anomaly_status == 'suspicious' %}
-                        🚨 WARNING! Suspicious voting patterns detected!
-                        Please investigate immediately!
-                    {% else %}
-                        ℹ️ Insufficient data for anomaly detection yet.
-                        Need more votes to analyze patterns.
-                    {% endif %}
-                </div>
-
-                <!-- Security Alerts -->
-                {% if alerts %}
-                <div class="alert-list">
-                    <h4 style="color:#c62828; margin-bottom:10px;">
-                        🚨 Security Alerts ({{ alerts|length }})
-                    </h4>
-                    {% for alert in alerts %}
-                    <div class="alert-item">
-                        ⚠️ {{ alert.message }}
-                        <span class="alert-time">{{ alert.time }}</span>
+                    <div class="form-inline">
+                        <input type="text" name="description"
+                               placeholder="Election Description"
+                               style="flex:3;">
+                        <button type="submit"
+                                class="btn btn-primary">
+                            ➕ Create Election
+                        </button>
                     </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
+                </form>
             </div>
 
-            <!-- CANDIDATES TABLE -->
+            <!-- ELECTIONS LIST -->
             <div class="section-card">
-                <h3>🏛️ Candidates & Vote Counts</h3>
+                <h3>🗳️ All Elections</h3>
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Candidate Name</th>
-                            <th>Party</th>
+                            <th>Title</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Voters</th>
                             <th>Votes</th>
-                            <th>Progress</th>
                             <th>Status</th>
+                            <th>Results</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for candidate in candidates %}
+                        {% for election in elections %}
                         <tr>
-                            <td>{{ candidate[0] }}</td>
-                            <td><strong>{{ candidate[1] }}</strong></td>
-                            <td>{{ candidate[2] }}</td>
-                            <td><strong>{{ candidate[3] }}</strong></td>
+                            <td>{{ election[0] }}</td>
+                            <td><strong>{{ election[1] }}</strong></td>
                             <td>
-                                <div class="vote-bar">
-                                    <div class="vote-bar-fill" style="width:
-                                        {% if votes_cast > 0 %}
-                                            {{ candidate[3] / votes_cast * 100 }}%
-                                        {% else %}0%{% endif %}">
-                                    </div>
-                                </div>
+                                {% if election[3] %}
+                                    {{ election[3].strftime('%d %b %Y %H:%M') }}
+                                {% else %}Not set{% endif %}
                             </td>
                             <td>
-                                {% if loop.first and votes_cast > 0 %}
-                                <span class="badge-active">Leading</span>
+                                {% if election[4] %}
+                                    {{ election[4].strftime('%d %b %Y %H:%M') }}
+                                {% else %}Not set{% endif %}
+                            </td>
+                            <td>{{ election[8] }}</td>
+                            <td>{{ election[9] }}</td>
+                            <td>
+                                {% if election[5] %}
+                                <span class="badge-active">🟢 Active</span>
                                 {% else %}
-                                <span class="badge-inactive">Behind</span>
+                                <span class="badge-inactive">🔴 Inactive</span>
                                 {% endif %}
+                            </td>
+                            <td>
+                                {% if election[7] %}
+                                <span class="badge-active">📢 Released</span>
+                                {% else %}
+                                <span class="badge-inactive">🔒 Hidden</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('toggle_election', election_id=election[0]) }}"
+                                   class="action-link">
+                                    {% if election[5] %}Stop{% else %}Start{% endif %}
+                                </a>
+                                <a href="{{ url_for('toggle_results', election_id=election[0]) }}"
+                                   class="action-link"
+                                   style="color:{% if election[7] %}#c62828{% else %}#2e7d32{% endif %};">
+                                    {% if election[7] %}Hide Results{% else %}Release Results{% endif %}
+                                </a>
+                                <a href="{{ url_for('election_home', election_id=election[0]) }}"
+                                   class="action-link">View</a>
+                                <a href="{{ url_for('results', election_id=election[0]) }}"
+                                   class="action-link">Results</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -409,16 +322,190 @@
                 </table>
             </div>
 
+            <!-- ADD CANDIDATE -->
+            <div class="section-card">
+                <h3>🏛️ Add Candidate to Election</h3>
+                <form method="POST"
+                      action="{{ url_for('add_candidate') }}">
+                    <div class="form-inline">
+                        <select name="election_id" required
+                                style="min-width:200px;">
+                            <option value="">Select Election</option>
+                            {% for election in elections %}
+                            <option value="{{ election[0] }}">
+                                {{ election[1] }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="name"
+                               placeholder="Candidate Name" required>
+                        <input type="text" name="party"
+                               placeholder="Party Name" required>
+                        <button type="submit"
+                                class="btn btn-primary">
+                            ➕ Add Candidate
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- APPROVED VOTERS -->
+            <div class="section-card">
+                <h3>👥 Add Approved Voter</h3>
+                <form method="POST"
+                      action="{{ url_for('add_approved_voter') }}">
+                    <div class="form-inline">
+                        <input type="text" name="full_name"
+                               placeholder="Full Name" required>
+                        <input type="text" name="voter_id"
+                               placeholder="Voter ID" required>
+                        <input type="email" name="email"
+                               placeholder="Email" required>
+                    </div>
+                    <div class="form-inline">
+                        <input type="text" name="aadhar_number"
+                               placeholder="Aadhar (1234-5678-9012)"
+                               required>
+                        <input type="text" name="phone"
+                               placeholder="Phone" required>
+                        <input type="date" name="date_of_birth"
+                               required>
+                        <input type="text" name="address"
+                               placeholder="Address">
+                        <button type="submit"
+                                class="btn btn-primary">
+                            ➕ Add Voter
+                        </button>
+                    </div>
+                </form>
+
+                <!-- CSV BULK UPLOAD -->
+                <div style="margin-top:20px; padding:20px; background:linear-gradient(135deg, #e8f5e9, #f1f8e9);
+                            border-radius:16px; border:2px dashed #4caf50;">
+                    <h4 style="color:#2e7d32; margin-bottom:12px; font-size:1rem;">
+                        📁 Bulk Upload Voters (CSV)
+                    </h4>
+                    <p style="color:#666; font-size:0.82rem; margin-bottom:12px;">
+                        Upload a CSV file with columns:
+                        <code style="background:#fff; padding:2px 6px; border-radius:4px; font-size:0.78rem;">
+                            full_name, voter_id, email, aadhar_number, phone, date_of_birth, address
+                        </code>
+                    </p>
+                    <form method="POST"
+                          action="{{ url_for('bulk_upload_voters') }}"
+                          enctype="multipart/form-data">
+                        <div class="form-inline">
+                            <input type="file" name="csv_file" accept=".csv"
+                                   required
+                                   style="flex:2; padding:8px; background:white;
+                                          border:2px solid #4caf50; border-radius:10px;">
+                            <button type="submit"
+                                    class="btn btn-primary"
+                                    style="background:linear-gradient(135deg, #2e7d32, #43a047);">
+                                📤 Upload CSV
+                            </button>
+                            <a href="{{ url_for('download_sample_csv') }}"
+                               class="btn btn-primary"
+                               style="background:white; color:#1a237e; border:2px solid #1a237e;
+                                      text-decoration:none; padding:10px 18px; border-radius:10px;
+                                      font-weight:600; font-size:0.85rem;">
+                                📥 Download Sample CSV
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Approved Voters Table -->
+                <table class="data-table" style="margin-top:20px;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Voter ID</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Aadhar</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voter in approved_voters %}
+                        <tr>
+                            <td><strong>{{ voter[1] }}</strong></td>
+                            <td>{{ voter[2] }}</td>
+                            <td>{{ voter[3] }}</td>
+                            <td>{{ voter[5] }}</td>
+                            <td>{{ voter[4] }}</td>
+                            <td>
+                                <a href="{{ url_for('delete_approved_voter', voter_id=voter[0]) }}"
+                                   onclick="return confirm('Remove this voter?')"
+                                   class="action-link danger">
+                                    🗑️ Remove
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- AI ANOMALY DETECTION -->
+            <div class="section-card">
+                <h3>🤖 AI Anomaly Detection</h3>
+                <div class="anomaly-status
+                    {% if anomaly_status == 'normal' %}anomaly-normal
+                    {% elif anomaly_status == 'suspicious' %}anomaly-suspicious
+                    {% else %}anomaly-neutral{% endif %}">
+                    {% if anomaly_status == 'normal' %}
+                        ✅ All voting patterns look normal
+                    {% elif anomaly_status == 'suspicious' %}
+                        🚨 Suspicious activity detected!
+                    {% else %}
+                        ℹ️ Insufficient data yet
+                    {% endif %}
+                </div>
+
+                {% if alerts %}
+                <div style="margin-top:15px;">
+                    {% for alert in alerts %}
+                    <div style="background:#ffebee; border-radius:10px;
+                                padding:10px 15px; margin-bottom:8px;
+                                color:#b71c1c; font-size:0.85rem;">
+                        ⚠️ {{ alert.message }}
+                        <span style="color:#999; margin-left:10px;
+                                     font-size:0.78rem;">
+                            {{ alert.time }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="footer">
         <p>🗳️ SecureVote — Blockchain Based Voting System</p>
         <p>CVR College of Engineering | Dept. of CSE(DS)</p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <button class="dark-toggle" onclick="toggleDarkMode()"
+            id="darkBtn">🌙</button>
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.getElementById('darkBtn');
+            btn.textContent =
+                document.body.classList.contains('dark-mode')
+                ? '☀️' : '🌙';
+            localStorage.setItem('darkMode',
+                document.body.classList.contains('dark-mode'));
+        }
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkBtn').textContent = '☀️';
+        }
+    </script>
 
 </body>
 </html>

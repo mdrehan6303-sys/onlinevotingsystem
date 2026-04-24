@@ -3,88 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | SecureVote</title>
+    <title>Administrator Login — National Voting System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-    <!-- NAVIGATION BAR -->
+    <!-- GOVERNMENT TOP BAR -->
+    <div class="gov-topbar">
+        Restricted Access — Authorized Government Personnel Only
+    </div>
+
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
-                🗳️ SecureVote
-            </a>
+            <div class="brand-seal">&#9670;</div>
+            <div class="brand-text">
+                <span class="brand-name">National Voting System</span>
+                <span class="brand-sub">Electronic Election Management Portal</span>
+            </div>
         </div>
         <div class="nav-links">
-            <a href="{{ url_for('voter_login') }}">🔑 Voter Login</a>
+            <a href="{{ url_for('index') }}">Public Portal</a>
         </div>
     </nav>
 
-    <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
                 <div class="alert alert-{{ category }}">
+                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0">
+                        {% if category == 'success' %}<polyline points="20,6 9,17 4,12"></polyline>
+                        {% else %}<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line>{% endif %}
+                    </svg>
                     {{ message }}
                 </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 
-    <!-- ADMIN LOGIN FORM -->
-    <div class="form-container">
+    <div class="form-container" style="flex:1; background: linear-gradient(135deg, #0d1f3c 0%, #162d4e 100%);">
         <div class="form-card">
-
             <div class="form-header">
-                <h2>🔐 Admin Login</h2>
-                <p>Authorized personnel only</p>
+                <div class="form-seal">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <h2>Administrator Login</h2>
+                <p>Restricted to authorized election officials</p>
             </div>
 
-            <form method="POST" action="{{ url_for('admin_login') }}">
+            <div class="form-body">
+                <form method="POST" action="{{ url_for('admin_login') }}">
+                    <div class="form-group">
+                        <label for="username">Official Username</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your official username" autocomplete="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Access Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your secure password" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px;">
+                        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Authenticate &amp; Access Dashboard
+                    </button>
+                </form>
 
-                <!-- Username -->
-                <div class="form-group">
-                    <label for="username">👤 Username</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        placeholder="Enter admin username"
-                        required
-                    >
+                <div class="form-security-note" style="margin-top:20px;">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C18.25 23.15 22 18.25 22 13V7L12 2z"></path></svg>
+                    This session is encrypted and all access attempts are logged for audit purposes.
+                    Unauthorized access is a criminal offence.
                 </div>
+            </div>
 
-                <!-- Password -->
-                <div class="form-group">
-                    <label for="password">🔒 Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Enter admin password"
-                        required
-                    >
-                </div>
-
-                <!-- Default credentials hint -->
-                <div class="hint-box">
-                    💡 Default credentials — Username: <strong>admin</strong>
-                    | Password: <strong>admin123</strong>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary btn-full">
-                    🔐 Login as Admin
-                </button>
-
-            </form>
-
+            <div class="form-footer">
+                <a href="{{ url_for('index') }}">Return to Public Portal</a>
+            </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="footer">
-        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+        <div class="footer-top">
+            <div class="footer-logo">&#9670;</div>
+            <span class="footer-brand">National Electronic Voting System</span>
+        </div>
+        <p>Official Government Election Management Portal &mdash; All access is monitored and logged</p>
     </footer>
 
 </body>

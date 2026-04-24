@@ -3,119 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voter Registration | SecureVote</title>
+    <title>Voter Registration — National Voting System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-    <!-- NAVIGATION BAR -->
+    <div class="gov-topbar">Official Voter Registration Portal — Authorized Access Only</div>
+
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
-                🗳️ SecureVote
-            </a>
+            <div class="brand-seal">&#9670;</div>
+            <div class="brand-text">
+                <span class="brand-name">National Voting System</span>
+                <span class="brand-sub">Electronic Election Management Portal</span>
+            </div>
         </div>
         <div class="nav-links">
-            <a href="{{ url_for('voter_login') }}">🔑 Login</a>
-            <a href="{{ url_for('admin_login') }}">🔐 Admin</a>
+            <a href="{{ url_for('voter_login', election_id=election_id) }}">Voter Sign-In</a>
+            <a href="{{ url_for('index') }}">Home</a>
         </div>
     </nav>
 
-    <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+        {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line></svg>
+                {{ message }}
+            </div>
+        {% endfor %}{% endif %}
     {% endwith %}
 
-    <!-- REGISTRATION FORM -->
-    <div class="form-container">
-        <div class="form-card">
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="{{ url_for('index') }}">Home</a> &rsaquo;
+            <span>{% if election %}{{ election[1] }}{% endif %}</span> &rsaquo;
+            <span>Registration</span>
+        </div>
+        <h1>Voter Registration</h1>
+    </div>
 
+    <div style="display:flex;justify-content:center;padding:40px 20px;background:var(--off-white);">
+        <div class="form-card" style="max-width:500px;width:100%;">
             <div class="form-header">
-                <h2>📝 Voter Registration</h2>
-                <p>Register yourself to participate in the election</p>
+                <div class="form-seal">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                </div>
+                <h2>Voter Enrolment Form</h2>
+                <p>{% if election %}{{ election[1] }}{% endif %} — Your details must match official records</p>
             </div>
 
-            <form method="POST" action="{{ url_for('voter_register') }}">
-
-                <!-- Full Name -->
-                <div class="form-group">
-                    <label for="full_name">👤 Full Name</label>
-                    <input
-                        type="text"
-                        id="full_name"
-                        name="full_name"
-                        placeholder="Enter your full name"
-                        required
-                    >
+            <div class="form-body">
+                <div class="form-security-note" style="margin-bottom:20px;">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    Registration is restricted to pre-approved voters only. All submitted details are verified against the official electoral register.
                 </div>
 
-                <!-- Voter ID -->
-                <div class="form-group">
-                    <label for="voter_id">🪪 Voter ID</label>
-                    <input
-                        type="text"
-                        id="voter_id"
-                        name="voter_id"
-                        placeholder="Enter your unique Voter ID"
-                        required
-                    >
-                    <small>This will be your unique identifier</small>
-                </div>
+                <form method="POST" action="{{ url_for('voter_register', election_id=election_id) }}">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="form-group" style="grid-column:1/-1;">
+                            <label>Full Name (as per official records)</label>
+                            <input type="text" name="full_name" placeholder="Enter your full legal name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Voter Identification Number</label>
+                            <input type="text" name="voter_id" placeholder="Official Voter ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" name="date_of_birth" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" name="email" placeholder="Your registered email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <input type="text" name="phone" placeholder="Registered phone number" required>
+                        </div>
+                        <div class="form-group" style="grid-column:1/-1;">
+                            <label>National ID / Aadhaar Number</label>
+                            <input type="text" name="aadhar_number" placeholder="12-digit national identification number" required>
+                        </div>
+                        <div class="form-group" style="grid-column:1/-1;">
+                            <label>Create Access Password</label>
+                            <input type="password" name="password" placeholder="Create a secure password for login" required>
+                            <p style="font-size:0.73rem;color:var(--text-muted);margin-top:5px;">This password will be used to sign in and cast your vote.</p>
+                        </div>
+                    </div>
 
-                <!-- Email -->
-                <div class="form-group">
-                    <label for="email">📧 Email Address</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email address"
-                        required
-                    >
-                </div>
+                    <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px;">
+                        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Submit Registration &amp; Send OTP
+                    </button>
+                </form>
+            </div>
 
-                <!-- Password -->
-                <div class="form-group">
-                    <label for="password">🔒 Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Create a strong password"
-                        required
-                    >
-                    <small>Your password will be encrypted using SHA-256</small>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary btn-full">
-                    📝 Register Now
-                </button>
-
-            </form>
-
-            <!-- Link to Login -->
             <div class="form-footer">
-                <p>Already registered?
-                    <a href="{{ url_for('voter_login') }}">Login here</a>
-                </p>
+                Already registered? <a href="{{ url_for('voter_login', election_id=election_id) }}">Sign In here</a>
             </div>
-
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="footer">
-        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+        <div class="footer-top">
+            <div class="footer-logo">&#9670;</div>
+            <span class="footer-brand">National Electronic Voting System</span>
+        </div>
+        <p>Official Government Election Management Portal</p>
     </footer>
 
 </body>
 </html>
-```
-

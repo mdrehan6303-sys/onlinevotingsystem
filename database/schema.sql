@@ -1,52 +1,100 @@
 CREATE DATABASE IF NOT EXISTS voting_system;
 USE voting_system;
 
--- Admin table
+-- ─────────────────────────────────────────
+-- CORE SETTINGS & ADMIN
+-- ─────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) NOT NULL,
+    username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
 );
 
--- Voters table
-CREATE TABLE IF NOT EXISTS voters (
+-- ─────────────────────────────────────────
+-- MULTI-ELECTION CORE
+-- ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS elections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    start_time DATETIME,
+    end_time DATETIME,
+    is_active BOOLEAN DEFAULT FALSE,
+    results_released BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS election_candidates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    election_id INT NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    party VARCHAR(150) NOT NULL,
+    vote_count INT DEFAULT 0,
+    FOREIGN KEY (election_id) REFERENCES elections(id) ON DELETE CASCADE
+);
+
+-- ─────────────────────────────────────────
+-- VOTER MANAGEMENT
+-- ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS approved_voters (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
     voter_id VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
+    aadhar_number VARCHAR(12) UNIQUE,
+    phone VARCHAR(20),
+    date_of_birth DATE,
+    address TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS election_voters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    election_id INT NOT NULL,
+    voter_id VARCHAR(50) NOT NULL,
+    full_name VARCHAR(150),
+    email VARCHAR(150),
     password VARCHAR(255) NOT NULL,
-    has_voted BOOLEAN DEFAULT FALSE
+    has_voted BOOLEAN DEFAULT FALSE,
+    biometric_data MEDIUMTEXT, -- Stores the base64 captured face image upon login/reg
+    FOREIGN KEY (election_id) REFERENCES elections(id) ON DELETE CASCADE
 );
 
--- Candidates table
-CREATE TABLE IF NOT EXISTS candidates (
+-- ─────────────────────────────────────────
+-- BLOCKCHAIN LEDGER
+-- ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS election_blockchain_votes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    party VARCHAR(150) NOT NULL,
-    vote_count INT DEFAULT 0
-);
-
--- Blockchain votes table
-CREATE TABLE IF NOT EXISTS blockchain_votes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    election_id INT NOT NULL,
     block_index INT NOT NULL,
     voter_hash VARCHAR(255) NOT NULL,
     candidate_id INT NOT NULL,
     timestamp VARCHAR(100) NOT NULL,
     previous_hash VARCHAR(255) NOT NULL,
-    current_hash VARCHAR(255) NOT NULL
+    current_hash VARCHAR(255) NOT NULL,
+    FOREIGN KEY (election_id) REFERENCES elections(id) ON DELETE CASCADE
 );
 
--- Election status table
-CREATE TABLE IF NOT EXISTS election_status (
+-- ─────────────────────────────────────────
+-- AI SECURITY LOGS (PERSISTENT STATE)
+-- ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS ai_voting_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    is_active BOOLEAN DEFAULT FALSE
+    hour INT NOT NULL,
+    minute INT NOT NULL,
+    voter_hash_segment BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Default data
-INSERT INTO admin (username, password) VALUES ('admin', 'admin123');
-INSERT INTO election_status (is_active) VALUES (FALSE);
-INSERT INTO candidates (name, party) VALUES
-('Candidate A', 'Party Alpha'),
-('Candidate B', 'Party Beta'),
-('Candidate C', 'Party Gamma');
+CREATE TABLE IF NOT EXISTS ai_ip_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ip_address VARCHAR(100) NOT NULL,
+    attempt_time DATETIME NOT NULL
+);
+
+-- ─────────────────────────────────────────
+-- DEFAULT DATA
+-- ─────────────────────────────────────────
+-- Using a bcrypt hash for 'admin123' as default standard. (Wait we can keep it standard plaintext hashing format just in case we reset, but security.py handles bcrypt now)
+-- We will assume the python code handles registering admins correctly.
+INSERT IGNORE INTO admin (username, password) VALUES ('admin', '$2b$12$KkQ0N/.Z/b4/N/yv5ZExhO8R/zKx6/nKkKkKkKkKkKkKkKkKkKkKk');

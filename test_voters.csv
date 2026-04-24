@@ -1,0 +1,6 @@
+full_name,voter_id,email,aadhar_number,phone,date_of_birth,address
+Ravi Teja,VOTER010,ravi@college.edu,111122223333,9000000001,2002-03-15,Hostel A
+Sneha Reddy,VOTER011,sneha@college.edu,111122224444,9000000002,2003-06-20,Hostel B
+Karthik M,VOTER012,karthik@college.edu,111122225555,9000000003,2002-09-10,Day Scholar
+Lakshmi P,VOTER013,lakshmi@college.edu,111122226666,9000000004,2003-01-25,Hostel C
+Venkat S,VOTER014,venkat@college.edu,111122227777,9000000005,2002-12-05,Day Scholar

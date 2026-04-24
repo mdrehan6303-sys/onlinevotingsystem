@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,40 @@
             color: #1a237e;
             font-size: 2.2rem;
             font-weight: 800;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffebee;
+            color: #c62828;
+            border-radius: 25px;
+            padding: 6px 18px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #c62828;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
         }
 
         .total-votes-badge {
@@ -37,8 +71,14 @@
             color: #1a237e;
             font-weight: 700;
             font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(26,35,126,0.1);
-            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(26, 35, 126, 0.1);
+            margin-top: 5px;
+        }
+
+        .last-updated {
+            color: #999;
+            font-size: 0.8rem;
+            margin-top: 8px;
         }
 
         .winner-card {
@@ -48,21 +88,10 @@
             padding: 45px 40px;
             text-align: center;
             margin-bottom: 30px;
-            box-shadow: 0 20px 50px rgba(26,35,126,0.4);
+            box-shadow: 0 20px 50px rgba(26, 35, 126, 0.4);
             position: relative;
             overflow: hidden;
-        }
-
-        .winner-card::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(
-                circle,
-                rgba(255,255,255,0.05) 0%,
-                transparent 60%
-            );
+            transition: all 0.5s;
         }
 
         .winner-crown {
@@ -73,8 +102,15 @@
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(-8px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
         }
 
         .winner-label {
@@ -89,6 +125,7 @@
             font-size: 2.2rem;
             font-weight: 800;
             margin-bottom: 5px;
+            transition: all 0.5s;
         }
 
         .winner-party {
@@ -97,13 +134,12 @@
             margin-bottom: 15px;
         }
 
-        .winner-votes {
+        .winner-votes-badge {
             display: inline-block;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             padding: 8px 20px;
             font-weight: 700;
-            font-size: 1rem;
         }
 
         .no-winner {
@@ -112,34 +148,47 @@
             padding: 40px;
             text-align: center;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .no-winner h3 {
-            color: #1a237e;
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .no-winner p {
-            color: #666;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
         .candidates-results {
             background: white;
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             margin-bottom: 25px;
         }
 
-        .candidates-results h3 {
-            color: #1a237e;
-            font-size: 1.2rem;
-            font-weight: 700;
+        .candidates-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 2px solid #f0f2f5;
+        }
+
+        .candidates-results-header h3 {
+            color: #1a237e;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: 2px solid #1a237e;
+            color: #1a237e;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: #1a237e;
+            color: white;
         }
 
         .result-item {
@@ -198,7 +247,7 @@
             height: 100%;
             border-radius: 10px;
             background: linear-gradient(90deg, #1a237e, #42a5f5);
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .progress-fill.gold {
@@ -220,6 +269,12 @@
             font-weight: 800;
             color: #1a237e;
             display: block;
+            transition: all 0.5s;
+        }
+
+        .count-number.updated {
+            color: #2e7d32;
+            transform: scale(1.2);
         }
 
         .count-label {
@@ -246,34 +301,51 @@
             line-height: 1.7;
             font-size: 0.92rem;
         }
+
+        .updating-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: #42a5f5;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .updating-indicator.show {
+            display: flex;
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
+
 <body>
 
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{{ url_for('index') }}"
-               style="color:white; text-decoration:none;">
+            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
                 🗳️ SecureVote
             </a>
         </div>
         <div class="nav-links">
-            <a href="{{ url_for('voter_login') }}">🔑 Login</a>
+            <a href="{{ url_for('voter_login', election_id=election_id) }}">🔑 Login</a>
             <a href="{{ url_for('admin_login') }}">🔐 Admin</a>
         </div>
     </nav>
-
-    <!-- FLASH MESSAGES -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
 
     <!-- RESULTS -->
     <div class="results-page">
@@ -281,82 +353,117 @@
 
             <!-- Header -->
             <div class="results-top">
+                <!-- Live Badge -->
+                <div class="live-badge">
+                    <div class="live-dot"></div>
+                    LIVE RESULTS
+                </div>
+
                 <h2>📊 Election Results</h2>
+
                 <div class="total-votes-badge">
-                    🗳️ Total Votes Cast: <strong>{{ total_votes }}</strong>
+                    🗳️ Total Votes:
+                    <strong id="total-votes">{{ total_votes }}</strong>
+                </div>
+
+                <div class="last-updated" id="last-updated">
+                    Last updated: just now
                 </div>
             </div>
 
             <!-- Winner Card -->
-            {% if candidates and total_votes > 0 %}
-            <div class="winner-card">
-                <span class="winner-crown">🏆</span>
-                <div class="winner-label">Winner</div>
-                <div class="winner-name">{{ candidates[0][1] }}</div>
-                <div class="winner-party">🏛️ {{ candidates[0][2] }}</div>
-                <div class="winner-votes">
-                    {{ candidates[0][3] }} votes —
-                    {% if total_votes > 0 %}
-                        {{ "%.1f"|format(candidates[0][3] / total_votes * 100) }}%
-                    {% endif %}
-                </div>
-            </div>
-            {% else %}
-            <div class="no-winner">
-                <h3>🗳️ No votes cast yet</h3>
-                <p>Results will appear here once voting begins!</p>
-            </div>
-            {% endif %}
-
-            <!-- All Candidates -->
-            <div class="candidates-results">
-                <h3>📋 All Candidates</h3>
-
-                {% for candidate in candidates %}
-                <div class="result-item
-                    {% if loop.first and total_votes > 0 %}
-                        winner-item
-                    {% endif %}">
-
-                    <div class="result-rank">
-                        {% if loop.index == 1 %}🥇
-                        {% elif loop.index == 2 %}🥈
-                        {% elif loop.index == 3 %}🥉
-                        {% else %}#{{ loop.index }}{% endif %}
+            <div id="winner-section">
+                {% if candidates and total_votes > 0 %}
+                <div class="winner-card">
+                    <span class="winner-crown">🏆</span>
+                    <div class="winner-label">Winner</div>
+                    <div class="winner-name" id="winner-name">
+                        {{ candidates[0][1] }}
                     </div>
-
-                    <div class="result-details">
-                        <h4>{{ candidate[1] }}</h4>
-                        <p>🏛️ {{ candidate[2] }}</p>
-                        <div class="progress-bar">
-                            <div class="progress-fill
-                                {% if loop.first %}gold{% endif %}"
-                                style="width:
-                                {% if total_votes > 0 %}
-                                    {{ candidate[3] / total_votes * 100 }}%
-                                {% else %}0%{% endif %}">
-                            </div>
-                        </div>
-                        <span class="result-percentage">
+                    <div class="winner-party" id="winner-party">
+                        🏛️ {{ candidates[0][2] }}
+                    </div>
+                    <div class="winner-votes-badge">
+                        <span id="winner-votes">{{ candidates[0][3] }}</span>
+                        votes —
+                        <span id="winner-percent">
                             {% if total_votes > 0 %}
-                                {{ "%.1f"|format(
-                                    candidate[3] / total_votes * 100
-                                ) }}% of total votes
-                            {% else %}
-                                0% of total votes
+                            {{ "%.1f"|format(
+                            candidates[0][3]/total_votes*100
+                            ) }}%
                             {% endif %}
                         </span>
                     </div>
-
-                    <div class="result-count">
-                        <span class="count-number">
-                            {{ candidate[3] }}
-                        </span>
-                        <span class="count-label">votes</span>
-                    </div>
-
                 </div>
-                {% endfor %}
+                {% else %}
+                <div class="no-winner">
+                    <h3>🗳️ No votes cast yet</h3>
+                    <p>Results will appear here once
+                        voting begins!</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- All Candidates -->
+            <div class="candidates-results">
+                <div class="candidates-results-header">
+                    <h3>📋 All Candidates</h3>
+                    <div style="display:flex; gap:10px;
+                                align-items:center;">
+                        <div class="updating-indicator" id="updating">
+                            <span class="spin">↻</span>
+                            Updating...
+                        </div>
+                        <button class="refresh-btn" onclick="fetchResults()">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div id="candidates-list">
+                    {% for candidate in candidates %}
+                    <div class="result-item
+                        {% if loop.first and total_votes > 0 %}
+                            winner-item{% endif %}" id="candidate-{{ candidate[0] }}">
+
+                        <div class="result-rank">
+                            {% if loop.index == 1 %}🥇
+                            {% elif loop.index == 2 %}🥈
+                            {% elif loop.index == 3 %}🥉
+                            {% else %}#{{ loop.index }}{% endif %}
+                        </div>
+
+                        <div class="result-details">
+                            <h4>{{ candidate[1] }}</h4>
+                            <p>🏛️ {{ candidate[2] }}</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill
+                                    {% if loop.first %}gold{% endif %}" id="bar-{{ candidate[0] }}" style="width:
+                                    {% if total_votes > 0 %}
+                                        {{ candidate[3]/total_votes*100 }}%
+                                    {% else %}0%{% endif %}">
+                                </div>
+                            </div>
+                            <span class="result-percentage" id="pct-{{ candidate[0] }}">
+                                {% if total_votes > 0 %}
+                                {{ "%.1f"|format(
+                                candidate[3]/total_votes*100
+                                ) }}%
+                                {% else %}0%{% endif %}
+                                of total votes
+                            </span>
+                        </div>
+
+                        <div class="result-count">
+                            <span class="count-number" id="votes-{{ candidate[0] }}">
+                                {{ candidate[3] }}
+                            </span>
+                            <span class="count-label">votes</span>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
 
             </div>
 
@@ -364,9 +471,9 @@
             <div class="blockchain-note">
                 <h3>🔗 Blockchain Transparency</h3>
                 <p>All votes are permanently recorded on the
-                   blockchain. Every vote is cryptographically
-                   secured and cannot be modified or deleted.
-                   Results are 100% accurate and tamper-proof.</p>
+                    blockchain. Every vote is cryptographically
+                    secured and cannot be modified or deleted.
+                    Results are 100% accurate and tamper-proof.</p>
             </div>
 
         </div>
@@ -378,7 +485,143 @@
         <p>CVR College of Engineering | Dept. of CSE(DS)</p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.1/socket.io.js"></script>
+    <script>
+        // ── Fetch live results instantly via WebSockets ──
+        const socket = io();
+        let previousVotes = {};
+        
+        socket.on('new_vote', function(data) {
+            console.log('New vote detected! Fetching latest results...');
+            fetchResults();
+        });
 
+        function fetchResults() {
+            // Show updating indicator
+            document.getElementById('updating')
+                .classList.add('show');
+
+            fetch('/api/live-results')
+                .then(response => response.json())
+                .then(data => {
+                    updateResults(data);
+                    document.getElementById('updating')
+                        .classList.remove('show');
+                    document.getElementById('last-updated')
+                        .textContent = 'Last updated: ' +
+                        data.timestamp;
+                })
+                .catch(error => {
+                    console.log('Update failed:', error);
+                    document.getElementById('updating')
+                        .classList.remove('show');
+                });
+        }
+
+        function updateResults(data) {
+            // Update total votes
+            const totalEl = document.getElementById('total-votes');
+            if (totalEl) {
+                totalEl.textContent = data.total_votes;
+            }
+
+            // Update each candidate
+            data.candidates.forEach((candidate, index) => {
+                const votesEl = document.getElementById(
+                    'votes-' + candidate.id
+                );
+                const barEl = document.getElementById(
+                    'bar-' + candidate.id
+                );
+                const pctEl = document.getElementById(
+                    'pct-' + candidate.id
+                );
+
+                if (votesEl) {
+                    // Check if votes changed
+                    const oldVotes = previousVotes[candidate.id] || 0;
+
+                    if (candidate.votes > oldVotes) {
+                        // Animate the number change
+                        votesEl.classList.add('updated');
+                        setTimeout(() => {
+                            votesEl.classList.remove('updated');
+                        }, 1000);
+                    }
+
+                    votesEl.textContent = candidate.votes;
+                    previousVotes[candidate.id] = candidate.votes;
+                }
+
+                // Update progress bar
+                if (barEl) {
+                    barEl.style.width = candidate.percentage + '%';
+                }
+
+                // Update percentage
+                if (pctEl) {
+                    pctEl.textContent = candidate.percentage +
+                        '% of total votes';
+                }
+
+                // Update winner card
+                if (index === 0 && data.total_votes > 0) {
+                    const winnerName = document.getElementById(
+                        'winner-name'
+                    );
+                    const winnerParty = document.getElementById(
+                        'winner-party'
+                    );
+                    const winnerVotes = document.getElementById(
+                        'winner-votes'
+                    );
+                    const winnerPct = document.getElementById(
+                        'winner-percent'
+                    );
+
+                    if (winnerName) {
+                        winnerName.textContent = candidate.name;
+                    }
+                    if (winnerParty) {
+                        winnerParty.textContent =
+                            '🏛️ ' + candidate.party;
+                    }
+                    if (winnerVotes) {
+                        winnerVotes.textContent = candidate.votes;
+                    }
+                    if (winnerPct) {
+                        winnerPct.textContent =
+                            candidate.percentage + '%';
+                    }
+                }
+            });
+        }
+
+        // Initial fetch after 1 second
+        setTimeout(fetchResults, 1000);
+    </script>
+    <!-- Dark Mode Toggle -->
+    <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.getElementById('darkBtn');
+            if (document.body.classList.contains('dark-mode')) {
+                btn.textContent = '☀️';
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                btn.textContent = '🌙';
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+
+        // Remember dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkBtn').textContent = '☀️';
+        }
+    </script>
+    
 </body>
 </html>

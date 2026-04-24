@@ -3,265 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify OTP | SecureVote</title>
+    <title>Email Verification — National Voting System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        .otp-input-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
+        .otp-input-group { display:flex; gap:10px; justify-content:center; margin:24px 0; }
         .otp-digit {
-            width: 55px;
-            height: 55px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            outline: none;
-            transition: border-color 0.3s;
-            color: #1a237e;
+            width:52px; height:56px; text-align:center; font-size:1.4rem; font-weight:700;
+            border:1px solid var(--border); border-radius:var(--radius); outline:none;
+            color:var(--navy); font-family:'Inter',sans-serif; transition:border-color 0.2s, box-shadow 0.2s;
+            background:var(--off-white);
         }
-
-        .otp-digit:focus {
-            border-color: #1a237e;
-            box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
-        }
-
-        .timer {
-            text-align: center;
-            color: #f57f17;
-            font-weight: 600;
-            font-size: 1rem;
-            margin: 10px 0;
-        }
-
-        .timer.expired {
-            color: #c62828;
-        }
-
-        .resend-btn {
-            background: none;
-            border: none;
-            color: #1a237e;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-decoration: underline;
-            display: block;
-            margin: 10px auto;
-        }
-
-        .resend-btn:disabled {
-            color: #999;
-            cursor: not-allowed;
-            text-decoration: none;
-        }
-
-        .email-display {
-            background: #e8eaf6;
-            border-radius: 8px;
-            padding: 10px 15px;
-            text-align: center;
-            color: #1a237e;
-            font-weight: 600;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
+        .otp-digit:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(13,31,60,0.1); background:#fff; }
+        .otp-timer { text-align:center; font-size:0.85rem; font-weight:600; color:var(--gold); margin:10px 0; letter-spacing:0.04em; }
+        .otp-timer.expired { color:var(--error); }
+        .resend-link { display:block; text-align:center; margin-top:14px; font-size:0.82rem; color:var(--text-muted); }
+        .resend-link a { color:var(--navy); font-weight:600; }
+        .resend-link button { background:none; border:none; color:var(--navy); font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; font-size:0.82rem; }
+        .resend-link button:disabled { color:var(--text-muted); cursor:not-allowed; }
+        .email-indicator { background:var(--off-white); border:1px solid var(--border); border-radius:var(--radius); padding:11px 16px; text-align:center; font-size:0.88rem; font-weight:600; color:var(--navy); margin-bottom:4px; }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
+    <div class="gov-topbar">Secure Email Verification — Step 2 of 2</div>
+
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{{ url_for('index') }}"
-               style="color:white; text-decoration:none;">
-                🗳️ SecureVote
-            </a>
+            <div class="brand-seal">&#9670;</div>
+            <div class="brand-text">
+                <span class="brand-name">National Voting System</span>
+                <span class="brand-sub">Electronic Election Management Portal</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
         </div>
     </nav>
 
-    <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+        {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}{% endif %}
     {% endwith %}
 
-    <!-- OTP FORM -->
-    <div class="form-container">
+    <div class="form-container" style="background:var(--off-white);">
         <div class="form-card">
-
             <div class="form-header">
-                <h2>📧 Verify Your Email</h2>
-                <p>We sent a 6-digit OTP to your email</p>
+                <div class="form-seal">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </div>
+                <h2>Email Verification</h2>
+                <p>One-time security code required to complete registration</p>
             </div>
 
-            <!-- Show which email OTP was sent to -->
-            <div class="email-display">
-                📧 {{ email }}
-            </div>
+            <div class="form-body">
+                <p style="font-size:0.85rem;color:var(--text-body);margin-bottom:14px;line-height:1.7;">
+                    A 6-digit verification code has been dispatched to the registered email address below. Enter the code exactly as received.
+                </p>
 
-            <!-- Timer -->
-            <div class="timer" id="timer">
-                ⏰ OTP expires in: <span id="countdown">05:00</span>
-            </div>
+                <div class="email-indicator">{{ email }}</div>
+                <p style="text-align:center;font-size:0.73rem;color:var(--text-muted);margin-bottom:6px;">Verification code sent to this address</p>
 
-            <!-- OTP Form -->
-            <form method="POST"
-                  action="{{ url_for('verify_otp') }}"
-                  id="otpForm">
-
-                <!-- 6 individual digit boxes -->
-                <div class="otp-input-group">
-                    <input type="text" class="otp-digit"
-                           id="d1" maxlength="1" autofocus>
-                    <input type="text" class="otp-digit"
-                           id="d2" maxlength="1">
-                    <input type="text" class="otp-digit"
-                           id="d3" maxlength="1">
-                    <input type="text" class="otp-digit"
-                           id="d4" maxlength="1">
-                    <input type="text" class="otp-digit"
-                           id="d5" maxlength="1">
-                    <input type="text" class="otp-digit"
-                           id="d6" maxlength="1">
+                <div class="otp-timer" id="timerDisplay">
+                    Code expires in: <span id="countdown">05:00</span>
                 </div>
 
-                <!-- Hidden input that combines all 6 digits -->
-                <input type="hidden" name="otp" id="otpValue">
+                <form method="POST" action="{{ url_for('verify_otp', election_id=election_id) }}" id="otpForm">
+                    <div class="otp-input-group">
+                        <input type="text" class="otp-digit" id="d1" maxlength="1" inputmode="numeric" autofocus>
+                        <input type="text" class="otp-digit" id="d2" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-digit" id="d3" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-digit" id="d4" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-digit" id="d5" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-digit" id="d6" maxlength="1" inputmode="numeric">
+                    </div>
+                    <input type="hidden" name="otp" id="otpValue">
 
-                <button type="submit"
-                        class="btn btn-primary btn-full"
-                        onclick="combineOTP()">
-                    ✅ Verify OTP
-                </button>
+                    <button type="submit" class="btn btn-primary btn-full" onclick="combineOTP()">
+                        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Verify Code &amp; Complete Registration
+                    </button>
+                </form>
 
-            </form>
-
-            <!-- Resend OTP -->
-            <div style="text-align: center; margin-top: 15px;">
-                <p style="color: #666; font-size: 0.9rem;">
-                    Didn't receive OTP?
-                </p>
-                <button class="resend-btn"
-                        id="resendBtn"
-                        disabled
-                        onclick="resendOTP()">
-                    Resend OTP (wait 60 seconds)
-                </button>
+                <div class="resend-link" style="margin-top:18px;">
+                    Code not received?
+                    <button id="resendBtn" disabled onclick="resendOTP()">Resend Code (available in 60s)</button>
+                </div>
             </div>
 
-            <!-- Back to register -->
             <div class="form-footer">
-                <a href="{{ url_for('voter_register') }}">
-                    ← Back to Registration
-                </a>
+                <a href="{{ url_for('voter_register', election_id=election_id) }}">&larr; Back to Registration</a>
             </div>
-
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="footer">
-        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+        <div class="footer-top">
+            <div class="footer-logo">&#9670;</div>
+            <span class="footer-brand">National Electronic Voting System</span>
+        </div>
+        <p>Official Government Election Management Portal</p>
     </footer>
 
     <script>
-        // ── Auto move to next box when digit entered ──
         const digits = document.querySelectorAll('.otp-digit');
-
-        digits.forEach((digit, index) => {
-            digit.addEventListener('input', function() {
-                // Only allow numbers
+        digits.forEach((digit, i) => {
+            digit.addEventListener('input', function () {
                 this.value = this.value.replace(/[^0-9]/g, '');
-
-                // Move to next box automatically
-                if (this.value && index < digits.length - 1) {
-                    digits[index + 1].focus();
-                }
+                if (this.value && i < digits.length - 1) digits[i + 1].focus();
             });
-
-            // Allow backspace to go back
-            digit.addEventListener('keydown', function(e) {
-                if (e.key === 'Backspace' && !this.value && index > 0) {
-                    digits[index - 1].focus();
-                }
+            digit.addEventListener('keydown', function (e) {
+                if (e.key === 'Backspace' && !this.value && i > 0) digits[i - 1].focus();
             });
         });
 
-        // ── Combine all 6 digits into one OTP value ──
         function combineOTP() {
             let otp = '';
-            digits.forEach(digit => otp += digit.value);
+            digits.forEach(d => otp += d.value);
             document.getElementById('otpValue').value = otp;
         }
 
-        // ── 5 minute countdown timer ──
-        let timeLeft = 300; // 300 seconds = 5 minutes
+        let timeLeft = 300;
         const countdownEl = document.getElementById('countdown');
-        const timerEl     = document.getElementById('timer');
-        const resendBtn   = document.getElementById('resendBtn');
+        const timerEl = document.getElementById('timerDisplay');
+        const resendBtn = document.getElementById('resendBtn');
 
-        const timer = setInterval(function() {
+        const timer = setInterval(() => {
             timeLeft--;
-
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-
-            countdownEl.textContent =
-                String(minutes).padStart(2, '0') + ':' +
-                String(seconds).padStart(2, '0');
-
-            // Enable resend button after 60 seconds
+            const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            countdownEl.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
             if (timeLeft === 240) {
                 resendBtn.disabled = false;
-                resendBtn.textContent = '🔄 Resend OTP';
+                resendBtn.textContent = 'Resend Verification Code';
             }
-
-            // Timer expired
             if (timeLeft <= 0) {
                 clearInterval(timer);
                 timerEl.classList.add('expired');
-                countdownEl.textContent = 'EXPIRED';
-                timerEl.innerHTML =
-                    '❌ OTP has expired! Please request a new one.';
+                timerEl.textContent = 'Verification code has expired. Please request a new one.';
             }
         }, 1000);
 
-        // ── Resend OTP ──
         function resendOTP() {
-            window.location.href = "{{ url_for('resend_otp') }}";
+            window.location.href = "{{ url_for('resend_otp', election_id=election_id) }}";
         }
     </script>
-
 </body>
 </html>
-```
-
-### Step 3 — Save the file
-Press **Command + S** ✅
-
----
-
-### 🤔 What this page does:
-```
-Shows 6 individual digit boxes
-      ↓
-Voter types OTP digits
-      ↓
-Auto moves to next box as they type
-      ↓
-5 minute countdown timer shown
-      ↓
-After 60 seconds resend button appears
-      ↓
-Click Verify OTP → checks if correct
