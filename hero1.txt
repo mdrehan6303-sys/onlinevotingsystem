@@ -1,0 +1,18 @@
+
+.nav-links a:hover {
+    color: var(--white);
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(197,160,40,0.4);
+}
+
+.nav-links .btn-nav-admin {
+    background: var(--gold);
+    color: var(--navy-dark) !important;
+    font-weight: 700;
+    border-color: var(--gold) !important;
+}
+
+.nav-links .btn-nav-admin:hover {
+    background: var(--gold-light) !important;
+    color: var(--navy-dark) !important;
+}

@@ -38,14 +38,19 @@ CREATE TABLE IF NOT EXISTS election_candidates (
 -- ─────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS approved_voters (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    election_id INT NOT NULL,
     full_name VARCHAR(150) NOT NULL,
-    voter_id VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    aadhar_number VARCHAR(12) UNIQUE,
+    voter_id VARCHAR(50) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    aadhar_number VARCHAR(12),
     phone VARCHAR(20),
     date_of_birth DATE,
     address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (election_id) REFERENCES elections(id) ON DELETE CASCADE,
+    UNIQUE (election_id, voter_id),
+    UNIQUE (election_id, email),
+    UNIQUE (election_id, aadhar_number)
 );
 
 CREATE TABLE IF NOT EXISTS election_voters (

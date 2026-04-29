@@ -168,9 +168,34 @@ function animateCounters() {
 }
 
 // ─────────────────────────────────────────
+// 8. DARK MODE TOGGLE
+// ─────────────────────────────────────────
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const btn = document.getElementById('darkBtn');
+
+    if (document.body.classList.contains('dark-mode')) {
+        btn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        btn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+function applyPersistedTheme() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        const btn = document.getElementById('darkBtn');
+        if (btn) btn.textContent = '☀️';
+    }
+}
+
+// ─────────────────────────────────────────
 // RUN EVERYTHING WHEN PAGE LOADS
 // ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+    applyPersistedTheme();
     setupFadeIn();
     autoHideAlerts();
     setupVoteButton();
@@ -179,9 +204,9 @@ document.addEventListener('DOMContentLoaded', function() {
     animateCounters();
 
     // Only setup leave warning on vote page
-    if (window.location.pathname === '/vote') {
+    if (window.location.pathname.includes('/vote')) {
         setupLeaveWarning();
     }
 
-    console.log('✅ SecureVote JS loaded successfully!');
+    console.log('✅ NovaVote JS loaded successfully!');
 });

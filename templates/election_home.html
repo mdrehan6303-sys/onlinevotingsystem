@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ election[1] }} — National Voting System</title>
+    <title>{{ election[1] }} — NovaVote</title>
+    <meta name="description" content="Official NovaVote Portal — Secure, transparent, and blockchain-verified electronic voting system.">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+
+
+
 
     <div class="gov-topbar">Official Election Management Portal — Authorized Access</div>
 
     <nav class="navbar">
-        <div class="nav-brand">
+        <a href="{{ url_for('index') }}" class="nav-brand">
             <div class="brand-seal">&#9670;</div>
             <div class="brand-text">
-                <span class="brand-name">National Voting System</span>
-                <span class="brand-sub">Electronic Election Management Portal</span>
+                <span class="brand-name">NovaVote</span>
+                <span class="brand-sub">Digital Election Portal</span>
             </div>
-        </div>
+        </a>
         <div class="nav-links">
             {% if results_released %}<a href="{{ url_for('results', election_id=election_id) }}">Results</a>{% endif %}
             <a href="{{ url_for('admin_login') }}">Administrator</a>
@@ -156,9 +161,10 @@
     </div>
 
     <footer class="footer">
-        <div class="footer-top"><div class="footer-logo">&#9670;</div><span class="footer-brand">National Electronic Voting System</span></div>
+        <div class="footer-top"><div class="footer-logo">&#9670;</div><span class="footer-brand">NovaVote</span></div>
         <p>Official Government Election Management Portal</p>
     </footer>
 
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

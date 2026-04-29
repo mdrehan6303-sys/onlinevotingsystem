@@ -1,15 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 import mysql.connector
 from blockchain import Blockchain
-from smart_contract import VotingContract
 from security import SecurityModule
 from otp_service import OTPService
 from datetime import datetime
 import os
 import csv
 import io
-from app_db import get_db, close_db, init_db_pool
+from app_db import get_db, close_db
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "voting_system_secret_key_2024")
@@ -17,7 +16,8 @@ app.teardown_appcontext(close_db)
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-security    = SecurityModule(app)
+with app.app_context():
+    security    = SecurityModule(app)
 otp_service = OTPService()
 
 # Each election has its own blockchain
@@ -37,7 +37,7 @@ def get_blockchain(election_id):
             for b in blocks:
                 chain.restore_block(b[0], b[1], b[2], b[3], b[4], b[5])
             cursor.close()
-        except:
+        except Exception:
             pass
         election_blockchains[election_id] = chain
     return election_blockchains[election_id]
@@ -143,7 +143,8 @@ def voter_register(election_id):
             AND email = %s
             AND aadhar_number = %s
             AND phone = %s
-        """, (voter_id, email, aadhar_number, phone))
+            AND election_id = %s
+        """, (voter_id, email, aadhar_number, phone, election_id))
 
         approved = cursor.fetchone()
 
@@ -319,13 +320,13 @@ def voter_login(election_id):
         """, (election_id, voter_id))
 
         voter = cursor.fetchone()
-        
+
         if voter and security.verify_password(password, voter[5]):
             # Save biometric checkpoint
             if biometric_data:
                 cursor.execute("UPDATE election_voters SET biometric_data = %s WHERE id = %s", (biometric_data, voter[0]))
                 db.commit()
-                
+
             cursor.close()
             # db.close() handled by teardown
             session["voter_id"]     = voter[2]  # voter_id is index 2 in our schema! Wait, old schema had it at 3? Let me double-check
@@ -458,7 +459,7 @@ def vote(election_id):
 
         security.log_voting_activity(voter_id)
         # db.close() handled by teardown
-        
+
         # ─── REALTIME WEBSOCKET EMIT ───
         socketio.emit("new_vote", {"election_id": election_id})
 
@@ -466,7 +467,7 @@ def vote(election_id):
         import qrcode
         import io
         import base64
-        
+
         qr_data = f"Election: {election_id}\nBlock: {new_block.index}\nHash: {new_block.current_hash}\nPrev: {new_block.previous_hash}\nVoter: {new_block.voter_hash}"
         qr = qrcode.make(qr_data)
         buf = io.BytesIO()
@@ -821,8 +822,13 @@ def admin_dashboard():
     """)
     elections = cursor.fetchall()
 
-    # Get all approved voters
-    cursor.execute("SELECT * FROM approved_voters ORDER BY id DESC")
+    # Get all approved voters with election titles
+    cursor.execute("""
+        SELECT a.*, e.title
+        FROM approved_voters a
+        LEFT JOIN elections e ON a.election_id = e.id
+        ORDER BY a.id DESC
+    """)
     approved_voters = cursor.fetchall()
 
     # Get total stats
@@ -831,6 +837,15 @@ def admin_dashboard():
 
     cursor.execute("SELECT COUNT(*) FROM approved_voters")
     total_approved = cursor.fetchone()[0]
+
+    # Get all candidates with election titles
+    cursor.execute("""
+        SELECT c.*, e.title
+        FROM election_candidates c
+        LEFT JOIN elections e ON c.election_id = e.id
+        ORDER BY c.id DESC
+    """)
+    candidates = cursor.fetchall()
 
     cursor.close()
     # db.close() handled by teardown
@@ -841,6 +856,7 @@ def admin_dashboard():
     return render_template("admin_dashboard.html",
         elections       = elections,
         approved_voters = approved_voters,
+        candidates      = candidates,
         total_elections = total_elections,
         total_approved  = total_approved,
         anomaly_status  = anomaly_status,
@@ -876,6 +892,50 @@ def create_election():
         flash(f"Error: {e}", "error")
 
     return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/edit-election/<int:election_id>", methods=["GET", "POST"])
+def edit_election(election_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    db = get_db()
+    cursor = db.cursor(buffered=True)
+
+    if request.method == "POST":
+        title       = request.form["title"]
+        description = request.form["description"]
+        start_time  = request.form["start_time"]
+        end_time    = request.form["end_time"]
+
+        try:
+            cursor.execute("""
+                UPDATE elections
+                SET title = %s, description = %s, start_time = %s, end_time = %s
+                WHERE id = %s
+            """, (title, description, start_time, end_time, election_id))
+            db.commit()
+            flash("Election updated successfully!", "success")
+            return redirect(url_for("admin_dashboard"))
+        except Exception as e:
+            flash(f"Error: {e}", "error")
+
+    # GET request: load election data
+    cursor.execute("SELECT * FROM elections WHERE id = %s", (election_id,))
+    election = cursor.fetchone()
+    cursor.close()
+
+    if not election:
+        flash("Election not found!", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    # Convert datetime objects to string format required by datetime-local input
+    election_list = list(election)
+    if election_list[3]: # start_time
+        election_list[3] = election_list[3].strftime('%Y-%m-%dT%H:%M')
+    if election_list[4]: # end_time
+        election_list[4] = election_list[4].strftime('%Y-%m-%dT%H:%M')
+
+    return render_template("edit_election.html", election=election_list)
 
 # ─────────────────────────────────────────
 # TOGGLE ELECTION
@@ -964,6 +1024,29 @@ def add_candidate():
     return redirect(url_for("admin_dashboard"))
 
 # ─────────────────────────────────────────
+# DELETE CANDIDATE
+# ─────────────────────────────────────────
+@app.route("/admin/delete-candidate/<int:candidate_id>")
+def delete_candidate(candidate_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    try:
+        db = get_db()
+        cursor = db.cursor(buffered=True)
+        cursor.execute(
+            "DELETE FROM election_candidates WHERE id = %s",
+            (candidate_id,)
+        )
+        db.commit()
+        cursor.close()
+        flash("Candidate removed successfully!", "success")
+    except Exception as e:
+        flash(f"Error: {e}", "error")
+
+    return redirect(url_for("admin_dashboard"))
+
+# ─────────────────────────────────────────
 # ADD APPROVED VOTER
 # ─────────────────────────────────────────
 @app.route("/admin/add-approved-voter", methods=["POST"])
@@ -971,6 +1054,7 @@ def add_approved_voter():
     if "admin" not in session:
         return redirect(url_for("admin_login"))
 
+    election_id   = request.form["election_id"]
     full_name     = request.form["full_name"]
     voter_id      = request.form["voter_id"]
     email         = request.form["email"]
@@ -984,10 +1068,10 @@ def add_approved_voter():
         cursor = db.cursor(buffered=True)
         cursor.execute("""
             INSERT INTO approved_voters
-            (full_name, voter_id, email, aadhar_number,
+            (election_id, full_name, voter_id, email, aadhar_number,
              phone, date_of_birth, address)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (full_name, voter_id, email,
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (election_id, full_name, voter_id, email,
               aadhar_number, phone, dob, address))
         db.commit()
         cursor.close()
@@ -1005,6 +1089,11 @@ def add_approved_voter():
 def bulk_upload_voters():
     if "admin" not in session:
         return redirect(url_for("admin_login"))
+
+    election_id = request.form.get("election_id")
+    if not election_id:
+        flash("Please select an election!", "error")
+        return redirect(url_for("admin_dashboard"))
 
     if "csv_file" not in request.files:
         flash("No file selected!", "error")
@@ -1048,10 +1137,10 @@ def bulk_upload_voters():
 
                 cursor.execute("""
                     INSERT INTO approved_voters
-                    (full_name, voter_id, email, aadhar_number,
+                    (election_id, full_name, voter_id, email, aadhar_number,
                      phone, date_of_birth, address)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (full_name, voter_id, email,
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (election_id, full_name, voter_id, email,
                       aadhar_number, phone, dob if dob else None, address))
                 added += 1
 

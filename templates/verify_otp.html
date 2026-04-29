@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification — National Voting System</title>
+    <title>Email Verification — NovaVote</title>
+    <meta name="description" content="Official NovaVote Portal — Secure, transparent, and blockchain-verified electronic voting system.">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .otp-input-group { display:flex; gap:10px; justify-content:center; margin:24px 0; }
@@ -24,17 +25,21 @@
     </style>
 </head>
 <body>
+    <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+
+
+
 
     <div class="gov-topbar">Secure Email Verification — Step 2 of 2</div>
 
     <nav class="navbar">
-        <div class="nav-brand">
+        <a href="{{ url_for('index') }}" class="nav-brand">
             <div class="brand-seal">&#9670;</div>
             <div class="brand-text">
-                <span class="brand-name">National Voting System</span>
-                <span class="brand-sub">Electronic Election Management Portal</span>
+                <span class="brand-name">NovaVote</span>
+                <span class="brand-sub">Digital Election Portal</span>
             </div>
-        </div>
+        </a>
         <div class="nav-links">
             <a href="{{ url_for('index') }}">Home</a>
         </div>
@@ -100,7 +105,7 @@
     <footer class="footer">
         <div class="footer-top">
             <div class="footer-logo">&#9670;</div>
-            <span class="footer-brand">National Electronic Voting System</span>
+            <span class="footer-brand">NovaVote</span>
         </div>
         <p>Official Government Election Management Portal</p>
     </footer>
@@ -147,5 +152,6 @@
             window.location.href = "{{ url_for('resend_otp', election_id=election_id) }}";
         }
     </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

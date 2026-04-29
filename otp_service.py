@@ -26,7 +26,7 @@ class OTPService:
     def send_otp_email(self, receiver_email, otp, voter_name):
         try:
             message = MIMEMultipart("alternative")
-            message["Subject"] = "SecureVote Your OTP Verification Code"
+            message["Subject"] = "NovaVote Your OTP Verification Code"
             message["From"]    = self.gmail_address
             message["To"]      = receiver_email
 
@@ -41,7 +41,7 @@ class OTPService:
                             border-radius: 15px;
                             padding: 30px;">
                     <h2 style="color: #1a237e; text-align: center;">
-                        SecureVote
+                        NovaVote
                     </h2>
                     <p>Dear <strong>{voter_name}</strong>,</p>
                     <p>Your OTP verification code is:</p>
@@ -59,7 +59,7 @@ class OTPService:
                     <p>This OTP is valid for 5 minutes only.</p>
                     <p>Do not share this OTP with anyone.</p>
                     <p style="color: #1a237e; text-align: center;">
-                        <strong>SecureVote Blockchain Based Voting System</strong><br>
+                        <strong>NovaVote Blockchain Based Voting System</strong><br>
                         CVR College of Engineering | Dept. of CSE(DS)
                     </p>
                 </div>

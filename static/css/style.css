@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────
-   NATIONAL ELECTRONIC VOTING SYSTEM — OFFICIAL STYLESHEET
+   NOVAVOTE — OFFICIAL STYLESHEET
    ───────────────────────────────────────────────────────── */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
@@ -27,6 +27,51 @@
     --shadow-lg:   0 12px 40px rgba(13,31,60,0.16);
     --radius:      4px;
     --radius-lg:   8px;
+}
+
+/* ── Dark Mode ─────────────────────────────────────────── */
+body.dark-mode {
+    --navy:        #f4f6f9;
+    --navy-dark:   #ffffff;
+    --navy-mid:    #e0e4e9;
+    --navy-light:  #d5dce8;
+    --gold:        #e0b93a;
+    --gold-light:  #f0cf65;
+    --white:       #091629;
+    --off-white:   #050c18;
+    --border:      #1e3a63;
+    --text-dark:   #ffffff;
+    --text-body:   #a0b4d0;
+    --text-muted:  #7a8ca0;
+    --success:     #2ecc71;
+    --success-bg:  #0a2e1c;
+    --error:       #e74c3c;
+    --error-bg:    #2e0a0a;
+}
+
+.dark-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    background: var(--gold-light);
 }
 
 /* ── Reset & Base ───────────────────────────────────────── */
@@ -86,6 +131,8 @@ h1, h2, h3, h4 {
     display: flex;
     align-items: center;
     gap: 14px;
+    text-decoration: none;
+    transition: opacity 0.2s;
 }
 
 .nav-brand .brand-seal {
@@ -104,6 +151,10 @@ h1, h2, h3, h4 {
 .nav-brand .brand-text {
     display: flex;
     flex-direction: column;
+}
+
+.nav-brand:hover {
+    opacity: 0.85;
 }
 
 .nav-brand .brand-name {
@@ -199,7 +250,7 @@ h1, h2, h3, h4 {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: 
+    background-image:
         repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px),
         repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
     pointer-events: none;

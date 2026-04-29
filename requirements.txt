@@ -8,3 +8,4 @@ flask-bcrypt
 qrcode
 eventlet
 Pillow>=11.0.0
+matplotlib

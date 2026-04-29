@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Election Results | SecureVote</title>
+    <title>Election Results | NovaVote</title>
+    <meta name="description" content="Official NovaVote Portal — Secure, transparent, and blockchain-verified electronic voting system.">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .results-page {
@@ -333,14 +334,18 @@
 </head>
 
 <body>
+    <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="nav-brand">
-            <a href="{{ url_for('index') }}" style="color:white; text-decoration:none;">
-                🗳️ SecureVote
-            </a>
-        </div>
+        <a href="{{ url_for('index') }}" class="nav-brand">
+            <div class="brand-seal">&#9670;</div>
+            <div class="brand-text">
+                <span class="brand-name">NovaVote</span>
+                <span class="brand-sub">Digital Election Portal</span>
+            </div>
+        </a>
         <div class="nav-links">
             <a href="{{ url_for('voter_login', election_id=election_id) }}">🔑 Login</a>
             <a href="{{ url_for('admin_login') }}">🔐 Admin</a>
@@ -481,7 +486,7 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        <p>🗳️ SecureVote — Blockchain Based Voting System</p>
+        <p>🗳️ NovaVote — Blockchain Based Voting System</p>
         <p>CVR College of Engineering | Dept. of CSE(DS)</p>
     </footer>
 
@@ -490,7 +495,7 @@
         // ── Fetch live results instantly via WebSockets ──
         const socket = io();
         let previousVotes = {};
-        
+
         socket.on('new_vote', function(data) {
             console.log('New vote detected! Fetching latest results...');
             fetchResults();
@@ -501,7 +506,7 @@
             document.getElementById('updating')
                 .classList.add('show');
 
-            fetch('/api/live-results')
+            fetch('/api/live-results/' + {{ election_id }})
                 .then(response => response.json())
                 .then(data => {
                     updateResults(data);
@@ -601,27 +606,10 @@
         setTimeout(fetchResults, 1000);
     </script>
     <!-- Dark Mode Toggle -->
-    <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
 
-    <script>
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const btn = document.getElementById('darkBtn');
-            if (document.body.classList.contains('dark-mode')) {
-                btn.textContent = '☀️';
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                btn.textContent = '🌙';
-                localStorage.setItem('darkMode', 'false');
-            }
-        }
 
-        // Remember dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('darkBtn').textContent = '☀️';
-        }
-    </script>
-    
+
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

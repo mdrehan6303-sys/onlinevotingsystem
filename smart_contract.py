@@ -14,19 +14,16 @@ class VotingContract:
         cursor.execute("SELECT is_active FROM election_status WHERE id = 1")
         result = cursor.fetchone()
         cursor.close()
-        print("Election active status:", result)  # Debug
         return result[0] if result else False
 
     def is_voter_registered(self, voter_id):
         cursor = self.db.cursor()
-        print("Checking voter_id in DB:", voter_id)  # Debug
         cursor.execute(
             "SELECT id FROM voters WHERE voter_id = %s",
             (voter_id,)
         )
         result = cursor.fetchone()
         cursor.close()
-        print("Voter found in DB:", result)  # Debug
         return result is not None
 
     def has_already_voted(self, voter_id):
@@ -37,7 +34,6 @@ class VotingContract:
         )
         result = cursor.fetchone()
         cursor.close()
-        print("Has already voted:", result)  # Debug
         return result[0] if result else False
 
     def is_valid_candidate(self, candidate_id):
@@ -48,13 +44,9 @@ class VotingContract:
         )
         result = cursor.fetchone()
         cursor.close()
-        print("Candidate valid:", result)  # Debug
         return result is not None
 
     def cast_vote(self, voter_id, candidate_id):
-        print("=== SMART CONTRACT DEBUG ===")
-        print("Voter ID received:", voter_id)
-        print("Candidate ID received:", candidate_id)
 
         if not self.is_election_active():
             return {

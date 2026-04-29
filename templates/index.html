@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>National Electronic Voting System — Official Portal</title>
+    <title>NovaVote — Official Portal</title>
     <meta name="description" content="Official Secure Electronic Voting Portal — Blockchain-secured, tamper-proof election management system.">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+
+
 
     <!-- GOVERNMENT TOP BAR -->
     <div class="gov-topbar">
@@ -16,13 +19,13 @@
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="nav-brand">
+        <a href="{{ url_for('index') }}" class="nav-brand">
             <div class="brand-seal">&#9670;</div>
             <div class="brand-text">
-                <span class="brand-name">National Voting System</span>
-                <span class="brand-sub">Electronic Election Management Portal</span>
+                <span class="brand-name">NovaVote</span>
+                <span class="brand-sub">Digital Election Portal</span>
             </div>
-        </div>
+        </a>
         <div class="nav-links">
             <a href="{{ url_for('admin_login') }}" class="btn-nav-admin">Administrator Access</a>
         </div>
@@ -45,53 +48,18 @@
 
     <!-- HERO -->
     <div class="hero">
-        <div class="hero-eyebrow">Certified Secure &nbsp;|&nbsp; Blockchain Verified</div>
+        <div class="hero-eyebrow">Government of India &nbsp;|&nbsp; Election Commission Portal</div>
         <h1>Electronic <span>Voting</span> Portal</h1>
         <div class="hero-divider"></div>
         <p class="hero-sub">
-            A cryptographically secured, tamper-proof election management platform
-            ensuring the integrity and transparency of every electoral process.
+            The official digital platform for electoral mandate management.
+            Register for elections, cast your ballot securely, and view verified results.
         </p>
 
-        <div class="stats-bar">
-            <div class="stat-item">
-                <span class="number">{{ elections|length }}</span>
-                <span class="label">Active Mandates</span>
-            </div>
-            <div class="stat-item">
-                <span class="number">256</span>
-                <span class="label">-bit Encryption</span>
-            </div>
-            <div class="stat-item">
-                <span class="number">AI</span>
-                <span class="label">Fraud Detection</span>
-            </div>
-            <div class="stat-item">
-                <span class="number">OTP</span>
-                <span class="label">Identity Verified</span>
-            </div>
-        </div>
+
     </div>
 
-    <!-- SECURITY BANNER -->
-    <div class="security-banner">
-        <div class="security-item">
-            <svg viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C18.25 23.15 22 18.25 22 13V7L12 2z"></path></svg>
-            Blockchain Ledger Secured
-        </div>
-        <div class="security-item">
-            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            SHA-256 Encrypted
-        </div>
-        <div class="security-item">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            Pre-authorized Voters Only
-        </div>
-        <div class="security-item">
-            <svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline></svg>
-            Real-time Anomaly Detection
-        </div>
-    </div>
+
 
     <!-- ELECTIONS -->
     <div class="section">
@@ -111,7 +79,7 @@
                         {% if election[5] %}Polling Open{% else %}Polling Closed{% endif %}
                     </div>
                 </div>
-                <div class="election-card-body">
+        <div class="election-card-body">
                     <div class="election-info-row">
                         <span class="election-info-label">Commencement</span>
                         <span class="election-info-value">
@@ -142,61 +110,13 @@
         {% endif %}
     </div>
 
-    <!-- SYSTEM CAPABILITIES -->
-    <div class="features">
-        <h2>System Security Framework</h2>
-        <p class="features-subtitle">Enterprise-grade security and compliance infrastructure</p>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon-wrap">
-                    <svg viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C18.25 23.15 22 18.25 22 13V7L12 2z"></path></svg>
-                </div>
-                <h3>Blockchain Immutability</h3>
-                <p>Every ballot is cryptographically linked and stored as a tamper-proof block on a distributed ledger.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon-wrap">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                </div>
-                <h3>SHA-256 Encryption</h3>
-                <p>Military-grade cryptographic hashing protects all voter credentials and ballot data at rest and in transit.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon-wrap">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                </div>
-                <h3>Verified Electorate</h3>
-                <p>Only pre-authorized voters verified by the Election Commission may register and participate.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon-wrap">
-                    <svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline></svg>
-                </div>
-                <h3>AI Anomaly Detection</h3>
-                <p>Machine learning models continuously monitor for fraudulent voting patterns and suspicious activity.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon-wrap">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                </div>
-                <h3>Multi-Mandate Support</h3>
-                <p>Independently isolated elections with separate electorates, candidates, and blockchain ledgers.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon-wrap">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                </div>
-                <h3>Automated Scheduling</h3>
-                <p>Election periods are enforced automatically — balloting ceases precisely at the mandated closure time.</p>
-            </div>
-        </div>
-    </div>
+
 
     <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-top">
             <div class="footer-logo">&#9670;</div>
-            <span class="footer-brand">National Electronic Voting System</span>
+            <span class="footer-brand">NovaVote</span>
         </div>
         <p>Official Government Election Management Portal &mdash; All activity is monitored and logged</p>
         <div class="footer-links">
@@ -207,5 +127,6 @@
         </div>
     </footer>
 
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

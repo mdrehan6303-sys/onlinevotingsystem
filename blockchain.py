@@ -9,7 +9,7 @@ class Block:
         self.candidate_id = candidate_id
         self.previous_hash = previous_hash
         self.timestamp = timestamp if timestamp else str(time.time())
-        
+
         if current_hash:
             self.current_hash = current_hash
         else:
@@ -43,7 +43,7 @@ class Blockchain:
     def add_vote(self, voter_hash, candidate_id):
         # Consensus simulation
         self._simulate_consensus()
-        
+
         previous_hash = self.get_last_block().current_hash
         new_block = Block(
             index=len(self.chain),
@@ -53,15 +53,10 @@ class Blockchain:
         )
         self.chain.append(new_block)
         return new_block
-        
+
     def _simulate_consensus(self):
         """Simulate a Proof-of-Authority consensus across multiple nodes."""
-        print("Broadcasting block to peer nodes...")
         time.sleep(0.1) # Simulate network delay
-        print("Node 1: Validated ✓")
-        print("Node 2: Validated ✓")
-        print("Node 3: Validated ✓")
-        print("Consensus Reached! Appending to blockchain.")
 
     def restore_block(self, index, voter_hash, candidate_id, previous_hash, timestamp, current_hash):
         """Used to rebuild the chain from database safely."""
